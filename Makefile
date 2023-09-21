@@ -7,7 +7,7 @@ REQUIREMENTS_IN = requirements.in
 # The generated requirements.txt file
 REQUIREMENTS_TXT = requirements-dev.txt
 
-.PHONY: compile install push sort format type check fix-imports publish
+.PHONY: compile install push sort format type check fix-imports publish clean
 
 sort:
 	isort .
@@ -44,4 +44,8 @@ push: check
 publish: check
 	python setup.py sdist bdist_wheel
 	twine upload dist/*
+	rm -rf build dist .egg requests.egg-info *.egg-info
+
+
+clean:
 	rm -rf build dist .egg requests.egg-info *.egg-info
