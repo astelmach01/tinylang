@@ -39,3 +39,20 @@ print(chain.run(prompt))
 - 🧠 Conversation Memory. Keep all or some aspects of your conversation
 - 🤖 OpenAI LLMs. It couldn't be easier to call the OpenAI API.
 - 💻 Prompts. Simple and hackable.
+
+
+
+## Contributing
+
+To automatic package versions, we use semantic-release, which automatically bumps versions based on our commit messages.
+See [here](https://py-pkgs.org/07-releasing-versioning.html#automatic-version-bumping).
+
+Example: add a feature, minor version will be bumped from `0.1.0` to `0.2.0`:
+```
+git commit -m "feat: add example data and datasets module"
+```
+
+Example: fix a bug, patch version bumped from `0.1.0` to `0.1.1`
+```
+git commit -m "fix: fix confusing error message in plot_words"
+```
