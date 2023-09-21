@@ -12,8 +12,6 @@ With tinylang, everything is intuitive and customizeable, following most of the 
 
 ## Installation
 
-Just pip install with:
-
 ```shell
 pip install tinylang
 ```
@@ -23,7 +21,7 @@ pip install tinylang
 ```
 from tinychain.memory import ConversationMemory
 from tinychain.llms import OpenAIChat
-from tinychain.chain import LLMChain
+from tinychain.chains import LLMChain
 
 memory = ConversationMemory(last_k=10)
 
@@ -34,3 +32,10 @@ chain = LLMChain(memory, chatGPT)
 prompt = "Hello"
 print(chain.run(prompt))
 ```
+
+
+## Features
+
+- 🧠 Conversation Memory. Keep all or some aspects of your conversation
+- 🤖 OpenAI LLMs. It couldn't be easier to call the OpenAI API.
+- 💻 Prompts. Simple and hackable.
