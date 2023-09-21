@@ -5,7 +5,7 @@ with open("README.md", "r", encoding="utf-8") as f:
 
 setup(
     name="tinylang",
-    version="0.1.1",
+    version="0.1.2",
     packages=find_packages(),
     description="A tiny language interpreter",
     long_description=long_description,

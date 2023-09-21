@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     environment:
       name: PyPI
-      url: https://pypi.org/p/tinychain
+      url: https://pypi.org/p/tinylang
     permissions:
       id-token: write  # IMPORTANT: this permission is mandatory for trusted publishing
 
