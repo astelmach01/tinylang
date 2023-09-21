@@ -1,0 +1,17 @@
+{
+  "name": "tinylang",
+  "dockerFile": "Dockerfile",
+
+  // Set the base image for your container
+  "settings": {
+    "python.pythonPath": "/usr/local/bin/python",
+    "python.venvPath": "/workspace/.venv"
+  },
+
+  // Add the required extensions for Python development (optional)
+  "extensions": ["ms-python.python"],
+
+
+  // Add post-create and post-startup commands (optional)
+  "postCreateCommand": "python -m venv .venv",
+}
