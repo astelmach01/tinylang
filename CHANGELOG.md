@@ -2,6 +2,19 @@
 
 
 
+## v0.1.1 (2023-09-21)
+
+### Fix
+
+* fix: add pushing to pypi ([`91d3d2a`](https://github.com/astelmach01/tinylang/commit/91d3d2af22b1e7ef633258a0793b4e8ccc0ef5df))
+
+### Unknown
+
+* Merge pull request #11 from astelmach01/dev
+
+fix: add pushing to pypi ([`aaba676`](https://github.com/astelmach01/tinylang/commit/aaba6760e8dcbcbf4cdbb727960427e0d2c0d949))
+
+
 ## v0.1.0 (2023-09-21)
 
 ### Feature
