@@ -8,3 +8,4 @@ pytest
 wheel
 types-setuptools
 twine
+python-semantic-release

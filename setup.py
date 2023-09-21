@@ -3,9 +3,12 @@ from setuptools import find_packages, setup
 with open("README.md", "r", encoding="utf-8") as f:
     long_description = f.read()
 
+
+__version__ = "0.1.4"
+
 setup(
     name="tinylang",
-    version="0.1.4",
+    version=__version__,
     packages=find_packages(),
     description="A tiny language interpreter",
     long_description=long_description,
