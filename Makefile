@@ -49,6 +49,3 @@ publish: release
 
 clean:
 	rm -rf build dist .egg requests.egg-info *.egg-info
-
-release: clean
-	semantic-release generate-config --pyproject >> pyproject.toml
