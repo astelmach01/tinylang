@@ -2,6 +2,23 @@
 
 
 
+## v0.3.0 (2023-09-26)
+
+### Feature
+
+* feat: added conversation history and memory ([`cc09529`](https://github.com/astelmach01/tinylang/commit/cc09529b745041aa0c4149c5a42c31e6ea417427))
+
+### Fix
+
+* fix: CI ([`6060954`](https://github.com/astelmach01/tinylang/commit/60609541988289804c6b3dec4b965ca873cdc7ce))
+
+### Unknown
+
+* Merge pull request #13 from astelmach01/memory
+
+feat: added conversation history and memory ([`f288992`](https://github.com/astelmach01/tinylang/commit/f28899278577b415db38acde75ad213662be9439))
+
+
 ## v0.2.0 (2023-09-21)
 
 ### Feature

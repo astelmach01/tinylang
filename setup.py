@@ -4,7 +4,7 @@ with open("README.md", "r", encoding="utf-8") as f:
     long_description = f.read()
 
 
-__version__ = "0.2.0"
+__version__ = "0.3.0"
 
 setup(
     name="tinylang",
