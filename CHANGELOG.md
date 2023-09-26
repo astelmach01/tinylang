@@ -2,6 +2,19 @@
 
 
 
+## v0.3.1 (2023-09-26)
+
+### Fix
+
+* fix: add requirements ([`04c5e16`](https://github.com/astelmach01/tinylang/commit/04c5e16802eb6a34473df7612af9dd123ec67677))
+
+### Unknown
+
+* Merge pull request #14 from astelmach01/memory
+
+fix: add requirements ([`a9c9ad7`](https://github.com/astelmach01/tinylang/commit/a9c9ad7ab52604c70121be5a571a09acecd26f15))
+
+
 ## v0.3.0 (2023-09-26)
 
 ### Feature
