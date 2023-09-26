@@ -11,8 +11,9 @@ paths = [
 ]
 
 [build-system]
-requires = ["black"]
+requires = ["setuptools", "wheel"]
 build-backend = "setuptools.build_meta"
+
 
 [tool.isort]
 profile = "black"
@@ -26,10 +27,13 @@ warn_return_any = true
 warn_unused_configs = true
 exclude = [
     ".venv",
+    "venv",
     ".git",
     "build",
     "dist",
+    "tests",
 ]
+disallow_untyped_defs = true
 
 [tool.semantic_release]
 assets = []
