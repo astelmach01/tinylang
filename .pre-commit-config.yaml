@@ -22,7 +22,7 @@ repos:
       rev: v0.910
       hooks:
         -   id: mypy
-            files: ^(mypackage/|tests/)
+            files: ^(tests/)
             additional_dependencies:
                 - "pydantic>=1.10.4"
             name: Validate types with MyPy

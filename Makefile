@@ -2,7 +2,7 @@
 all: check
 
 # The input requirements.in file
-REQUIREMENTS_IN = requirements.in
+REQUIREMENTS_IN = requirements-dev.in
 
 # The generated requirements.txt file
 REQUIREMENTS_TXT = requirements-dev.txt

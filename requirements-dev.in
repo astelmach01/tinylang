@@ -9,3 +9,4 @@ wheel
 types-setuptools
 twine
 python-semantic-release
+setuptools
