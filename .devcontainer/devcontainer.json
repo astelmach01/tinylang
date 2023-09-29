@@ -1,13 +1,11 @@
-// For format details, see https://aka.ms/devcontainer.json. For config options, see the
-// README at: https://github.com/devcontainers/templates/tree/main/src/python
 {
 	"name": "Python 3",
-	// Or use a Dockerfile or Docker Compose file. More info: https://containers.dev/guide/dockerfile
 	"image": "mcr.microsoft.com/devcontainers/python:1-3.11-bullseye",
 	"features": {
 		"ghcr.io/devcontainers-contrib/features/flake8:2": {
 			"version": "latest",
-			"plugins": "flake8-black"
+			"plugins": "flake8-black",
+			"configPath": ".flake8"
 		},
 		"ghcr.io/devcontainers-contrib/features/isort:2": {
 			"version": "latest"
@@ -16,15 +14,11 @@
 			"version": "latest"
 		},
 		"ghcr.io/jungaretti/features/make:1": {},
-		"ghcr.io/devcontainers/features/github-cli":
-		{
+		"ghcr.io/devcontainers/features/github-cli": {
 			"version": "latest"
 		}
 	},
-
-	// Use 'postCreateCommand' to run commands after the container is created.
-	"postCreateCommand": "pip3 install --user -r requirements-dev.txt",
-
+	"postCreateCommand": "pip3 install --user -r requirements.txt -r requirements-dev.txt && pip3 install -e . && apt-get update && apt-get install -y make",
 	"customizations": {
 		"terminal.integrated.shell.linux": "/bin/bash",
 		"vscode": {
