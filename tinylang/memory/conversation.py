@@ -12,7 +12,9 @@ class ConversationMemory(BaseMemory):
     last_k: int | None
 
     def __init__(
-        self, messages: List[BaseMessage] | None = None, last_k: int | None = None
+        self,
+        messages: List[BaseMessage] | None = None,
+        last_k: int | None = None,
     ) -> None:
         self._last_k_must_be_positive_and_even(last_k)
         super().__init__(messages)

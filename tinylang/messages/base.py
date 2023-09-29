@@ -1,23 +1,21 @@
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
-from typing import Dict, Literal
+from typing import Dict
 
 from .utils import from_json
-
-RoleType = Literal["system", "user", "assistant"]
 
 
 @dataclass  # type: ignore
 class BaseMessage(ABC):
-    role: RoleType
+    prefix: str
     content: str
 
-    def __init__(self, content: str, role: RoleType) -> None:
+    def __init__(self, content: str, prefix: str) -> None:
         self.content = content
-        self.role = role
+        self.prefix = prefix
 
     def to_json(self) -> Dict[str, str]:
-        return {"role": self.role, "content": self.content}
+        return {"role": self.prefix, "content": self.content}
 
     def copy(self) -> "BaseMessage":
         return self.from_json(self.to_json())
@@ -28,7 +26,7 @@ class BaseMessage(ABC):
         return from_json(json)  # type: ignore
 
     def __str__(self) -> str:
-        return f"{self.role}: {self.content}"
+        return f"{self.prefix}: {self.content}"
 
     def __repr__(self) -> str:
-        return f"{self.__class__.__name__}({self.role}, {self.content})"
+        return f"{self.__class__.__name__}({self.prefix}, {self.content})"
