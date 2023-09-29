@@ -2,6 +2,25 @@
 
 
 
+## v0.4.0 (2023-09-29)
+
+### Feature
+
+* feat: add openai llm ([`bb20a9b`](https://github.com/astelmach01/tinylang/commit/bb20a9b185642569c484bd456c595e24a91c0ee7))
+
+### Fix
+
+* fix: bump python version ([`1355a27`](https://github.com/astelmach01/tinylang/commit/1355a278689c15a6b8e8df07b6f6559f78b8a180))
+
+* fix: add openai llm tests ([`d971a93`](https://github.com/astelmach01/tinylang/commit/d971a93fd215b4f8a76b1d99701644988764c89b))
+
+### Unknown
+
+* Merge pull request #15 from astelmach01/llms
+
+feat: add openai llm ([`e5060fd`](https://github.com/astelmach01/tinylang/commit/e5060fd0221093b28b6c8412976b74a0ec7166e8))
+
+
 ## v0.3.1 (2023-09-26)
 
 ### Fix
