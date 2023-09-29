@@ -2,6 +2,19 @@
 
 
 
+## v0.4.1 (2023-09-29)
+
+### Fix
+
+* fix: bump readme ([`fde4eee`](https://github.com/astelmach01/tinylang/commit/fde4eee787bd6c0e75ec083358217555141a74db))
+
+### Unknown
+
+* Merge pull request #16 from astelmach01/readme_changes
+
+fix: bump readme ([`5131a74`](https://github.com/astelmach01/tinylang/commit/5131a74f6f649c332c3fe09486ef2ca07813a64f))
+
+
 ## v0.4.0 (2023-09-29)
 
 ### Feature
