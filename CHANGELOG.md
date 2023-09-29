@@ -2,6 +2,19 @@
 
 
 
+## v0.4.2 (2023-09-29)
+
+### Fix
+
+* fix: bump devcontainer ([`88b4d8f`](https://github.com/astelmach01/tinylang/commit/88b4d8f47ade9391f195b1f67a3dbbfc71166d3a))
+
+### Unknown
+
+* Merge pull request #17 from astelmach01/devcontainer_changes
+
+fix: bump devcontainer ([`2057f3b`](https://github.com/astelmach01/tinylang/commit/2057f3bb27a3a36f53e4ac4fcb59277441108302))
+
+
 ## v0.4.1 (2023-09-29)
 
 ### Fix
