@@ -1,9 +1,12 @@
 mypy
+autoflake
 flake8
 isort
 black
+python-dotenv
 
 pytest
+pre-commit
 
 wheel
 types-setuptools
