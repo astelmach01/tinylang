@@ -20,12 +20,12 @@ pip install tinylang
 
 ```
 from tinychain.memory import ConversationMemory
-from tinychain.llms import OpenAIChat
+from tinychain.llms import OpenAI
 from tinychain.chains import LLMChain
 
 memory = ConversationMemory(last_k=10)
 
-chatGPT = OpenAIChat(OPENAI_API_KEY='')
+chatGPT = OpenAI(OpenAI='')
 
 chain = LLMChain(memory, chatGPT)
 
