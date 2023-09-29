@@ -6,6 +6,7 @@ black
 python-dotenv
 
 pytest
+pytest-mock
 pre-commit
 
 wheel

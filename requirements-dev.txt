@@ -105,6 +105,10 @@ pygments==2.16.1
     #   readme-renderer
     #   rich
 pytest==7.4.2
+    # via
+    #   -r requirements-dev.in
+    #   pytest-mock
+pytest-mock==3.11.1
     # via -r requirements-dev.in
 python-dotenv==1.0.0
     # via -r requirements-dev.in
