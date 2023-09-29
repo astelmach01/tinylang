@@ -18,7 +18,7 @@
 			"version": "latest"
 		}
 	},
-	"postCreateCommand": "pip3 install --user -r requirements.txt -r requirements-dev.txt && pip3 install -e . && apt-get update && apt-get install -y make",
+	"postCreateCommand": "pip3 install --user -r requirements-dev.txt && pip3 install -e . && apt-get update && apt-get install -y make",
 	"customizations": {
 		"terminal.integrated.shell.linux": "/bin/bash",
 		"vscode": {
