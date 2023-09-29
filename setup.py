@@ -6,7 +6,7 @@ with open("README.md", "r", encoding="utf-8") as f:
 with open("requirements.txt") as f:
     requirements = f.read().splitlines()
 
-__version__ = "0.4.2"
+__version__ = "0.4.3"
 
 setup(
     name="tinylang",
