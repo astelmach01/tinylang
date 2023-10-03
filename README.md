@@ -5,9 +5,9 @@ Make working with LLMs insanely simpler and easier than ever before.
 ## What is tinylang?
 A hackable and simpler Langchain.
 
-Langchain can be very cumbersome and annoying to work with. It's too big, complicated, and shoves premade prompts down your throat.
+Langchain can be very cumbersome and annoying to work with. It's too big, complicated, and shoves pre-made prompts down your throat.
 
-With tinylang, everything is intuitive and customizeable, following most of the Langchain API.
+With tinylang, everything is intuitive and customizable, following most of the Langchain API.
 
 
 ## Installation
@@ -25,7 +25,7 @@ from tinychain.chains import LLMChain
 
 memory = ConversationMemory(last_k=10)
 
-chatGPT = OpenAI(OpenAI='')
+chatGPT = OpenAI(openai_api_key='')
 
 chain = LLMChain(memory, chatGPT)
 
@@ -44,7 +44,7 @@ print(chain.run(prompt))
 
 ## Contributing
 
-To automatic package versions, we use semantic-release, which automatically bumps versions based on our commit messages.
+To automate package versions, we use semantic-release, which automatically bumps versions based on our commit messages.
 See [here](https://py-pkgs.org/07-releasing-versioning.html#automatic-version-bumping).
 
 Example: add a feature, minor version will be bumped from `0.1.0` to `0.2.0`:
