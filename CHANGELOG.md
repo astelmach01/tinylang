@@ -2,6 +2,29 @@
 
 
 
+## v0.5.0 (2023-10-03)
+
+### Feature
+
+* feat: add prompts ([`705f4df`](https://github.com/astelmach01/tinylang/commit/705f4df0bc056059e3bfa19ebdf049f5f3017a4b))
+
+### Fix
+
+* fix: add examples and tests ([`30ce8ab`](https://github.com/astelmach01/tinylang/commit/30ce8abd65984f1e8ee974b121b0789c40540b0c))
+
+### Unknown
+
+* Merge pull request #20 from astelmach01/prompts
+
+Prompts ([`5570211`](https://github.com/astelmach01/tinylang/commit/5570211034ed584695514611db9b3a9b94d92917))
+
+* added examples ([`fc6cd55`](https://github.com/astelmach01/tinylang/commit/fc6cd55c59da866339625d2d1e8a8723098b7d3d))
+
+* added examples ([`7a4d266`](https://github.com/astelmach01/tinylang/commit/7a4d2664981f0428588f0b71056cf43059105aa7))
+
+* add formatted prompt ([`e991259`](https://github.com/astelmach01/tinylang/commit/e9912598a0841e635b6d2486e61448b2bcbb5f51))
+
+
 ## v0.4.4 (2023-09-29)
 
 ### Fix
