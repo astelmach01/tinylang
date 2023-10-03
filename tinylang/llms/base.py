@@ -1,6 +1,8 @@
 from abc import ABC, abstractmethod
 from typing import Any, Dict, Generator, Union
 
+from openai.openai_object import OpenAIObject
+
 from tinylang.memory import ConversationMemory
 from tinylang.memory.base import BaseMemory
 
@@ -25,7 +27,7 @@ class BaseLLM(ABC):
     @abstractmethod
     def chat(
         self, prompt: str, stream: bool = False, raw_response: bool = False
-    ) -> Union[str, Generator[Dict[str, Any], None, None]]:
+    ) -> Union[str, OpenAIObject, Generator[Dict[str, Any], None, None]]:
         """
         Simulates a chat interaction with the model.
 
