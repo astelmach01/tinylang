@@ -2,7 +2,7 @@ mypy
 autoflake
 flake8
 isort
-black
+black[jupyter]
 python-dotenv
 
 pytest
@@ -14,3 +14,5 @@ types-setuptools
 twine
 python-semantic-release
 setuptools
+
+jupyter

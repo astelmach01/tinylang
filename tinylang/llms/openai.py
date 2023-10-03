@@ -47,7 +47,7 @@ class OpenAI(BaseLLM):
 
     def chat(
         self, prompt: str, stream: bool = False, raw_response: bool = False
-    ) -> Union[str, Generator[Dict[str, Any], None, None]]:
+    ) -> Union[str, OpenAIObject, Generator[Dict[str, Any], None, None]]:
         self.memory.add_user_message(prompt)
 
         api_response: OpenAIObject = openai.ChatCompletion.create(
@@ -62,4 +62,8 @@ class OpenAI(BaseLLM):
         else:
             chat_response: str = api_response["choices"][0]["message"]["content"]
             self.memory.add_assistant_message(chat_response)
+
+            if raw_response:
+                return api_response
+
             return chat_response

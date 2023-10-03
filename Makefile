@@ -41,11 +41,6 @@ push: check
 	git commit -m "$(message)"
 	git push
 
-publish: release
-	python setup.py sdist bdist_wheel
-	twine upload dist/*
-	rm -rf build dist .egg requests.egg-info *.egg-info
-
 
 clean:
 	rm -rf build dist .egg requests.egg-info *.egg-info

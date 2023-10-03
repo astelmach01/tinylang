@@ -16,26 +16,23 @@ class ConversationMemory(BaseMemory):
         messages: List[BaseMessage] | None = None,
         last_k: int | None = None,
     ) -> None:
-        self._last_k_must_be_positive_and_even(last_k)
+        self._last_k_validation(last_k)
         super().__init__(messages)
 
-        self.last_k = last_k or 1
-        self._last_k_messages = self.last_k * 2  # keep assistant and user messages
+        self.last_k = last_k
+        self._last_k_messages = None if last_k is None else last_k * 2
+        # * 2 to keep assistant and user messages
 
         # use a deque to keep the last k messages
         self.messages = deque(self.messages, maxlen=self._last_k_messages)
 
     @staticmethod
-    def _last_k_must_be_positive_and_even(last_k: int | None) -> int | None:
+    def _last_k_validation(last_k: int | None) -> int | None:
         if last_k is None:
             return last_k
 
         if last_k < 1:
             raise ValueError("last_k must be positive")
-
-        # must be even
-        if last_k % 2 == 1:
-            raise ValueError("last_k must be even")
 
         return last_k
 
@@ -56,4 +53,8 @@ class ConversationMemory(BaseMemory):
 
     def format_messages(self) -> List[Dict[str, str]]:
         temp = [message.to_json() for message in self.messages]
+
+        if self._last_k_messages is None:
+            return temp
+
         return temp[-self._last_k_messages :]

@@ -47,5 +47,4 @@ def test_last_k_validation() -> None:
     with pytest.raises(ValueError):
         ConversationMemory(last_k=-1)
 
-    with pytest.raises(ValueError):
-        ConversationMemory(last_k=3)
+    ConversationMemory(last_k=None)
