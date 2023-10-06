@@ -2,6 +2,23 @@
 
 
 
+## v0.6.0 (2023-10-06)
+
+### Feature
+
+* feat: add chain ([`c3cec7f`](https://github.com/astelmach01/tinylang/commit/c3cec7f5e982e5c60b67834eed9d2164abce726c))
+
+### Fix
+
+* fix: fix tests ([`86cf5fc`](https://github.com/astelmach01/tinylang/commit/86cf5fc9cec05edd885727dd9d3468c90c9f05e6))
+
+### Unknown
+
+* Merge pull request #21 from astelmach01/chains
+
+feat: add chain ([`f665315`](https://github.com/astelmach01/tinylang/commit/f665315433e03a0a958f12ebc87da2c58132f6a5))
+
+
 ## v0.5.0 (2023-10-03)
 
 ### Feature
