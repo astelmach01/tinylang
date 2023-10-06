@@ -15,6 +15,7 @@ class Chain:
     ) -> None:
         self.llm = llm
         self.memory = memory or ConversationMemory()
+        self.llm.memory = self.memory
 
         if isinstance(prompt, SystemMessage):
             self.memory.add_message(prompt)
