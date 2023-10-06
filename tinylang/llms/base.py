@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import Any, Dict, Generator, Union
+from typing import Any, Dict, Generator
 
 from openai.openai_object import OpenAIObject
 
@@ -25,15 +25,25 @@ class BaseLLM(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    def chat(
-        self, prompt: str, stream: bool = False, raw_response: bool = False
-    ) -> Union[str, OpenAIObject, Generator[Dict[str, Any], None, None]]:
+    def chat(self, prompt: str, raw_response: bool = False) -> str | OpenAIObject:
         """
         Simulates a chat interaction with the model.
 
         :param prompt: The user prompt.
-        :param stream: Whether to stream the response or not.
         :param raw_response: Whether to return the raw response or not.
+        :return: Generated output text.
+        """
+        raise NotImplementedError
+
+    @abstractmethod
+    def stream_chat(
+        self, prompt: str, raw_response: bool = False
+    ) -> Generator[Dict[str, Any], None, None]:
+        """
+        Streams a chat interaction with the model.
+
+        :param prompt: The user prompt.
+        :param raw_response: The raw json response.
         :return: Generated output text.
         """
         raise NotImplementedError

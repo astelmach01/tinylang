@@ -1,4 +1,4 @@
-from typing import Any, Dict, Generator, Union
+from typing import Any, Dict, Generator
 
 import openai
 from openai.openai_object import OpenAIObject
@@ -28,9 +28,34 @@ class OpenAI(BaseLLM):
     def load_model(self, model_path: str) -> bool:
         return True  # nothing to do here since using APImake
 
-    def _stream_response(
-        self, api_response: OpenAIObject, raw_response: bool
+    def chat(self, prompt: str, raw_response: bool = False) -> str | OpenAIObject:
+        self.memory.add_user_message(prompt)
+
+        api_response: OpenAIObject = openai.ChatCompletion.create(
+            model=self.model,
+            messages=self.memory.format_messages(),
+            **self.kwargs,
+        )
+
+        chat_response: str = api_response["choices"][0]["message"]["content"]
+        self.memory.add_assistant_message(chat_response)
+
+        if raw_response:
+            return api_response
+
+        return chat_response
+
+    def stream_chat(
+        self, prompt: str, raw_response: bool = False
     ) -> Generator[Dict[str, Any], None, None]:
+        self.memory.add_user_message(prompt)
+
+        api_response: OpenAIObject = openai.ChatCompletion.create(
+            model=self.model,
+            messages=self.memory.format_messages(),
+            **self.kwargs,
+        )
+
         aggregated_content = ""
         for chunk in api_response:
             content = chunk["choices"][0]["delta"].get("content")
@@ -44,26 +69,3 @@ class OpenAI(BaseLLM):
             yield chunk if raw_response else content
 
         self.memory.add_assistant_message(aggregated_content)
-
-    def chat(
-        self, prompt: str, stream: bool = False, raw_response: bool = False
-    ) -> Union[str, OpenAIObject, Generator[Dict[str, Any], None, None]]:
-        self.memory.add_user_message(prompt)
-
-        api_response: OpenAIObject = openai.ChatCompletion.create(
-            model=self.model,
-            messages=self.memory.format_messages(),
-            stream=stream,
-            **self.kwargs,
-        )
-
-        if stream:
-            return self._stream_response(api_response, raw_response)
-        else:
-            chat_response: str = api_response["choices"][0]["message"]["content"]
-            self.memory.add_assistant_message(chat_response)
-
-            if raw_response:
-                return api_response
-
-            return chat_response
