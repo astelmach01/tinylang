@@ -8,6 +8,7 @@ python-dotenv
 pytest
 pytest-mock
 pre-commit
+pydantic==2.4.2
 
 wheel
 types-setuptools

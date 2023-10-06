@@ -29,6 +29,6 @@ def test_chat_streaming(mocker, openai_instance) -> None:  # type: ignore
     )
     mocker.patch("openai.ChatCompletion.create", return_value=mock_stream_response)
 
-    response_gen = openai_instance.chat("Hi there!", stream=True)
+    response_gen = openai_instance.stream_chat("Hi there!")
     responses = list(response_gen)
     assert responses == ["Hello, ", "World!"]

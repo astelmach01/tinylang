@@ -283,9 +283,11 @@ pycodestyle==2.11.0
     # via flake8
 pycparser==2.21
     # via cffi
-pydantic==2.3.0
-    # via python-semantic-release
-pydantic-core==2.6.3
+pydantic==2.4.2
+    # via
+    #   -r requirements-dev.in
+    #   python-semantic-release
+pydantic-core==2.10.1
     # via pydantic
 pyflakes==3.1.0
     # via
