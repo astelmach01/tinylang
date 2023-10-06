@@ -2,6 +2,21 @@
 
 
 
+## v0.6.1 (2023-10-06)
+
+### Fix
+
+* fix: import ([`3eff7af`](https://github.com/astelmach01/tinylang/commit/3eff7af178fa1971a09e3bec5fdb4aa7cc4ec443))
+
+### Unknown
+
+* Update issue templates ([`63d3c9c`](https://github.com/astelmach01/tinylang/commit/63d3c9c17423da390f50189b08252eaa54e1d1b0))
+
+* Merge pull request #22 from astelmach01/quick_fix
+
+fix: import ([`f463ba7`](https://github.com/astelmach01/tinylang/commit/f463ba7c1b6482b925a6cdaf80622fbd9f416dc5))
+
+
 ## v0.6.0 (2023-10-06)
 
 ### Feature
