@@ -9,4 +9,4 @@ class SystemMessage(BaseMessage):
 
     @staticmethod
     def from_json(json: Dict[str, str]) -> "SystemMessage":
-        return SystemMessage(content=json["content"])
+        return SystemMessage(content=json["content"], prefix=json["prefix"])
