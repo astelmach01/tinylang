@@ -48,11 +48,11 @@ class ConversationMemory(BaseMemory):
     def add_assistant_message(self, message: str) -> None:
         self.add_message(AssistantMessage(message))
 
-    def to_json(self) -> List[Dict[str, str]]:
+    def to_json(self) -> List[Dict]:
         return [message.to_json() for message in self.messages]
 
-    def format_messages(self) -> List[Dict[str, str]]:
-        temp = [message.to_json() for message in self.messages]
+    def format_messages(self, include_image: bool = True) -> List[Dict]:
+        temp = [message.to_json(include_image) for message in self.messages]
 
         if self._last_k_messages is None:
             return temp

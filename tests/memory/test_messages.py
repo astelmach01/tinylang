@@ -1,7 +1,14 @@
-import pytest
+from pathlib import Path
 
+import numpy as np
+import pytest
+from PIL import Image as PillowImage
+
+from tinylang.images import Image
 from tinylang.memory import ConversationMemory
 from tinylang.messages import AssistantMessage, UserMessage
+
+RESOURCES_DIR = (Path(__file__).parent.parent / "resources").resolve()
 
 
 def test_last_k_validation() -> None:
@@ -46,3 +53,50 @@ def test_format_messages() -> None:
     assert messages[1]["content"] == "Hello, world!"
     assert messages[2]["content"] == "How are you?"
     assert messages[3]["content"] == "I'm fine, thanks"
+
+
+@pytest.fixture(scope="module")
+def loaded_image():
+    with PillowImage.open(RESOURCES_DIR / "image.png") as img:
+        yield np.array(img)
+
+
+def test_user_message_creation_with_image(loaded_image):
+    user_image = Image(loaded_image)
+    message_with_image = UserMessage(
+        content="Hello with image", prefix="User", image=user_image.to_numpy()
+    )
+    assert np.array_equal(message_with_image.image, loaded_image)
+
+
+def test_user_message_to_json_with_image(loaded_image):
+    user_image = Image(loaded_image)
+    message_with_image = UserMessage(
+        content="Hello with image", prefix="User", image=user_image.to_numpy()
+    )
+    json_data = message_with_image.to_json()
+    assert "image" in json_data
+    assert np.array_equal(json_data["image"], loaded_image)
+
+
+def test_user_message_copy(loaded_image):
+    user_image = Image(loaded_image)
+    message_with_image = UserMessage(
+        content="Hello with image", prefix="User", image=user_image.to_numpy()
+    )
+    copied_message = message_with_image.copy()
+    assert np.array_equal(copied_message.image, loaded_image)
+    assert copied_message.prefix == message_with_image.prefix
+    assert copied_message.content == message_with_image.content
+
+
+def test_user_message_str_and_repr(loaded_image):
+    user_image = Image(loaded_image)
+    message_with_image = UserMessage(
+        content="Hello with image", prefix="User", image=user_image.to_numpy()
+    )
+    repr(message_with_image)
+    assert str(message_with_image) == "User: Hello with image"
+    assert f"UserMessage(User, Hello with image, {str(user_image.image_data)})" in repr(
+        message_with_image
+    )

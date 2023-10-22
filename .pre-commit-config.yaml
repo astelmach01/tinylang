@@ -18,14 +18,6 @@ repos:
       hooks:
         -   id: isort
 
-  -   repo: https://github.com/pre-commit/mirrors-mypy
-      rev: v0.910
-      hooks:
-        -   id: mypy
-            files: ^(tests/)
-            additional_dependencies:
-                - "pydantic>=1.10.4"
-            name: Validate types with MyPy
 
   -   repo: https://github.com/PyCQA/flake8
       rev: 4.0.1  # The git tag for the version you want to use

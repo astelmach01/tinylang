@@ -1,10 +1,13 @@
+import os
 from typing import Any, Dict, Generator
 
 import openai
 from openai.openai_object import OpenAIObject
 
+from tinylang.images import Image
 from tinylang.llms.base import BaseLLM
 from tinylang.memory.base import BaseMemory
+from tinylang.messages import UserMessage
 
 
 class OpenAI(BaseLLM):
@@ -25,15 +28,22 @@ class OpenAI(BaseLLM):
         openai.api_key = self.openai_api_key
         openai.organization = self.openai_organization
 
-    def load_model(self, model_path: str) -> bool:
-        return True  # nothing to do here since using APImake
+    def load_model(self, model_path: os.PathLike) -> bool:
+        """
+        Loads a local model from a path.
+        """
+        return True  # since we're using the API
 
-    def chat(self, prompt: str, raw_response: bool = False) -> str | OpenAIObject:
-        self.memory.add_user_message(prompt)
+    def chat(
+        self, prompt: str, raw_response: bool = False, image: Image | None = None
+    ) -> str | OpenAIObject:
+        np_image = image.to_numpy() if image else None
+        message = UserMessage(prompt, image=np_image)
+        self.memory.add_message(message)
 
         api_response: OpenAIObject = openai.ChatCompletion.create(
             model=self.model,
-            messages=self.memory.format_messages(),
+            messages=self.memory.format_messages(include_image=False),
             **self.kwargs,
         )
 
@@ -53,6 +63,7 @@ class OpenAI(BaseLLM):
         api_response: OpenAIObject = openai.ChatCompletion.create(
             model=self.model,
             messages=self.memory.format_messages(),
+            stream=True,
             **self.kwargs,
         )
 
