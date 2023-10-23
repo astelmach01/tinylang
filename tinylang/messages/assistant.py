@@ -9,4 +9,4 @@ class AssistantMessage(BaseMessage):
 
     @staticmethod
     def from_json(json: Dict[str, str]) -> "AssistantMessage":
-        return AssistantMessage(content=json["content"])
+        return AssistantMessage(content=json["content"], prefix=json["prefix"])

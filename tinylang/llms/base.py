@@ -1,3 +1,4 @@
+import os
 from abc import ABC, abstractmethod
 from typing import Any, Dict, Generator
 
@@ -16,7 +17,7 @@ class BaseLLM(ABC):
         self.memory = memory or ConversationMemory()
 
     @abstractmethod
-    def load_model(self, model_path: str) -> bool:
+    def load_model(self, model_path: os.PathLike) -> bool:
         """
         Loads the model from the specified path into memory.
 

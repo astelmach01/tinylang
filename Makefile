@@ -2,10 +2,10 @@
 all: check
 
 # The input requirements.in file
-REQUIREMENTS_IN = requirements-dev.in
+REQUIREMENTS_IN = requirements.in
 
 # The generated requirements.txt file
-REQUIREMENTS_TXT = requirements-dev.txt
+REQUIREMENTS_TXT = requirements.txt
 
 .PHONY: compile install push sort format type check fix-imports publish clean
 
@@ -28,6 +28,10 @@ compile: $(REQUIREMENTS_TXT)
 
 install: compile
 	pip install -r $(REQUIREMENTS_TXT)
+	pip-compile requirements-dev.in -o requirements-dev.txt
+	pip install -r requirements-dev.txt
+	pip install -e .
+
 
 $(REQUIREMENTS_TXT): $(REQUIREMENTS_IN)
 	pip-compile $(REQUIREMENTS_IN) -o $(REQUIREMENTS_TXT)

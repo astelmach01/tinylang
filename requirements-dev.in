@@ -4,6 +4,7 @@ flake8
 isort
 black[jupyter]
 python-dotenv
+types-Pillow
 
 pytest
 pytest-mock

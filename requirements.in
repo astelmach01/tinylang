@@ -1,3 +1,9 @@
 pydantic==2.4.2
 
 openai
+
+numpy
+Pillow
+opencv-python
+scikit-image
+matplotlib
