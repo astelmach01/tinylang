@@ -24,7 +24,11 @@ jobs:
         pip install bump2version build twine
 
     - name: Bump version
-      run: bump2version patch --config-file .bumpversion.cfg
+      run: |
+        git config --global user.name "GitHub Action"
+        git config --global user.email "action@github.com"
+        bump2version patch --config-file .bumpversion.cfg
+
 
     - name: Push changes
       uses: ad-m/github-push-action@master
