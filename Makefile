@@ -56,3 +56,4 @@ publish: clean bump-version
 
 bump-version:
 	bump2version patch  # use 'minor' or 'major' for bigger changes
+	git push
