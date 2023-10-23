@@ -1,0 +1,31 @@
+name: Create release
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'setup.py' # This ensures the action is triggered only when setup.py changes, which is indicative of a version bump.
+
+jobs:
+  release:
+    runs-on: ubuntu-22.04
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version-file: '.python-version'
+
+    - name: Extract version from setup.py
+      run: echo "PKG_VERSION=$(python setup.py --version)" >> $GITHUB_ENV
+
+    - name: Create release
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: |
+        gh release create v${{ env.PKG_VERSION }} \
+            --repo="$GITHUB_REPOSITORY" \
+            --title="Release v${{ env.PKG_VERSION }}" \
+            --generate-notes
