@@ -36,7 +36,7 @@ install: compile
 $(REQUIREMENTS_TXT): $(REQUIREMENTS_IN)
 	pip-compile $(REQUIREMENTS_IN) -o $(REQUIREMENTS_TXT)
 
-push: check
+push: check bump-version
 	@if [ -z "$(message)" ]; then \
 		echo "Please specify a commit message: make commit message='Your message here'"; \
 		exit 1; \
@@ -55,5 +55,6 @@ publish: clean bump-version
 	python -m twine upload dist/*
 
 bump-version:
+	git add .
+	git commit -m "Bump version"
 	bump2version patch  # use 'minor' or 'major' for bigger changes
-	git push
