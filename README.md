@@ -1,4 +1,6 @@
 # 🦜🔗🔍 Tinylang
+[![Documentation Status](https://readthedocs.org/projects/tinylang/badge/?version=latest)](https://tinylang.readthedocs.io/en/latest/?badge=latest)
+
 
 Make working with LLMs insanely simpler and easier than ever before.
 
@@ -18,18 +20,28 @@ pip install tinylang
 
 ## Usage
 
-See `examples` as well!
+[Documentation](https://tinylang.readthedocs.io/en/latest/) is a WIP right now,
+see `examples` for the time being!
 
 ```
-from tinychain.memory import ConversationMemory
-from tinychain.llms import OpenAI
-from tinychain.chains import Chain
+from tinylang.chains import Chain
+from tinylang.llms import OpenAI
+from tinylang.memory import ConversationMemory
 
-memory = ConversationMemory(last_k=10)
+model = "gpt-3.5-turbo"
 
-chatGPT = OpenAI(openai_api_key='')
+chatGPT = OpenAI(
+    openai_api_key=openai_api_key,
+    openai_organization=openai_organization,
+    model=model,
+)
 
-chain = Chain(memory, chatGPT)
+memory = ConversationMemory()
+
+chain = Chain(
+    llm=chatGPT,
+    memory=memory,
+)
 
 prompt = "Hello"
 print(chain.run(prompt))
@@ -39,5 +51,6 @@ print(chain.run(prompt))
 ## Features
 
 - 🧠 Conversation Memory. Keep all or some aspects of your conversation
-- 🤖 OpenAI LLMs. It couldn't be easier to call the OpenAI API.
+- 🛸 OpenAI LLMs. It couldn't be easier to call the OpenAI API.
 - 💻 Prompts. Simple and hackable.
+- 🤖 Agents. Coming soon!
