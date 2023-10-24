@@ -22,7 +22,7 @@ type:
 fix-imports:
 	autoflake --remove-all-unused-imports --recursive --remove-unused-variables --in-place . --exclude=__init__.py
 
-check: sort format type fix-imports
+check: sort format type fix-imports clean
 
 compile: $(REQUIREMENTS_TXT)
 
@@ -36,7 +36,7 @@ install: compile
 $(REQUIREMENTS_TXT): $(REQUIREMENTS_IN)
 	pip-compile $(REQUIREMENTS_IN) -o $(REQUIREMENTS_TXT)
 
-push: check bump-version
+push: check
 	@if [ -z "$(message)" ]; then \
 		echo "Please specify a commit message: make commit message='Your message here'"; \
 		exit 1; \
@@ -50,7 +50,7 @@ clean:
 	rm -rf build dist .egg requests.egg-info *.egg-info
 
 
-publish: clean bump-version
+publish: clean
 	python setup.py sdist bdist_wheel
 	python -m twine upload dist/*
 

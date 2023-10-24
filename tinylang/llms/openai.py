@@ -23,7 +23,9 @@ class OpenAI(BaseLLM):
         self.openai_api_key = openai_api_key
         self.openai_organization = openai_organization
         self.model = model
-        self.kwargs = kwargs
+        self.kwargs = (
+            kwargs  # kwargs passed into the openai.ChatCompletion.create() method
+        )
 
         openai.api_key = self.openai_api_key
         openai.organization = self.openai_organization
@@ -37,13 +39,16 @@ class OpenAI(BaseLLM):
     def chat(
         self, prompt: str, raw_response: bool = False, image: Image | None = None
     ) -> str | OpenAIObject:
+        # take care of the image
         np_image = image.to_numpy() if image else None
+
+        # add the message to the memory
         message = UserMessage(prompt, image=np_image)
         self.memory.add_message(message)
 
         api_response: OpenAIObject = openai.ChatCompletion.create(
             model=self.model,
-            messages=self.memory.format_messages(include_image=False),
+            messages=self.memory.format_messages(style="openai"),
             **self.kwargs,
         )
 
