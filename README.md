@@ -18,7 +18,8 @@ pip install tinylang
 
 ## Usage
 
-See `examples` as well!
+[Documentation](https://tinylang.readthedocs.io/en/latest/) is a WIP right now,
+see `examples` for the time being!
 
 ```
 from tinychain.memory import ConversationMemory
@@ -39,5 +40,6 @@ print(chain.run(prompt))
 ## Features
 
 - 🧠 Conversation Memory. Keep all or some aspects of your conversation
-- 🤖 OpenAI LLMs. It couldn't be easier to call the OpenAI API.
+- 🛸 OpenAI LLMs. It couldn't be easier to call the OpenAI API.
 - 💻 Prompts. Simple and hackable.
+- 🤖 Agents. Coming soon!
