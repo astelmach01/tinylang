@@ -26,6 +26,8 @@ class BaseMessage(ABC):
         if style == "openai" and self.image is not None:
             result["image"] = self.image  # type: ignore
 
+        elif style == "copy" and self.image is not None:
+            result["image"] = self.image  # type: ignore
         return result
 
     @staticmethod

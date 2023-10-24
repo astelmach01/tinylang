@@ -13,10 +13,8 @@ class UserMessage(BaseMessage):
 
     @staticmethod
     def from_json(json: Dict[str, str]) -> "UserMessage":
-        if "image" in json:
-            return UserMessage(
-                content=json["content"],
-                image=np.array(json["image"]),
-                prefix=json["prefix"],
-            )
-        return UserMessage(content=json["content"], prefix=json["prefix"])
+        return UserMessage(
+            content=json["content"],
+            image=json.get("image"),  # type: ignore
+            prefix=json.get("role", "user"),
+        )

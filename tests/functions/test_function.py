@@ -60,7 +60,7 @@ def test_get_articles_function():
 
     expected = {
         "name": "get_articles",
-        "description": "This function gets the top_k articles based on a user's query, sorted by relevance.\n        It also downloads the files and stores them in arxiv_library.csv to be retrieved by the read_article_and_summarize.\n        ",  # noqa
+        "description": "This function gets the top_k articles based on a user's query, sorted by relevance. # noqa\n        It also downloads the files and stores them in arxiv_library.csv to be retrieved\n        by the read_article_and_summarize.\n        ",
         "parameters": {
             "properties": {
                 "query": {"type": "string"},
@@ -71,6 +71,7 @@ def test_get_articles_function():
             "type": "object",
         },
     }
+
     assert get_articles == expected
 
 
@@ -83,12 +84,12 @@ def test_read_article_and_summarize_function():
 
     expected = {
         "name": "read_article_and_summarize",
-        "description": "Use this function to read whole papers and provide a summary for users.\n "  # noqa
-        "       You should NEVER call this function before get_articles has been called in the conversation.\n        ",  # noqa
+        "description": "Use this function to read whole papers and provide a summary for users.\n        You should NEVER call this function before get_articles has been called in the conversation. # noqa\n        ",  # noqa
         "parameters": {
             "properties": {"query": {"type": "string"}},
             "required": ["query"],
             "type": "object",
         },
     }
+
     assert read_article_and_summarize == expected
