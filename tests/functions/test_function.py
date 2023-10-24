@@ -53,7 +53,7 @@ def test_get_articles_function():
 
     @function
     def get_articles(query: str, library: str = paper_dir_filepath, top_k: int = 5):
-        """This function gets the top_k articles based on a user's query, sorted by relevance.
+        """This function gets the top_k articles based on a user's query, sorted by relevance. # noqa
         It also downloads the files and stores them in arxiv_library.csv to be retrieved
         by the read_article_and_summarize.
         """
