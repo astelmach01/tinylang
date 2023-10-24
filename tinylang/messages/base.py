@@ -20,11 +20,12 @@ class BaseMessage(ABC):
         self.prefix = prefix
         self.image = image
 
-    def to_json(self, include_image: bool = True) -> Dict:
-        result = {"role": "user", "prefix": self.prefix, "content": self.content}
+    def to_json(self, style: str = "openai") -> Dict:
+        result = {"role": self.prefix, "content": self.content}
 
-        if include_image and self.image is not None:
+        if style == "openai" and self.image is not None:
             result["image"] = self.image  # type: ignore
+
         return result
 
     @staticmethod
@@ -33,7 +34,7 @@ class BaseMessage(ABC):
         return from_json(json)  # type: ignore
 
     def copy(self) -> "BaseMessage":
-        return self.from_json(self.to_json(include_image=True))
+        return self.from_json(self.to_json(style="copy"))
 
     def __str__(self) -> str:
         return f"{self.prefix}: {self.content}"

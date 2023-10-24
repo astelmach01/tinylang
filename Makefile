@@ -22,7 +22,7 @@ type:
 fix-imports:
 	autoflake --remove-all-unused-imports --recursive --remove-unused-variables --in-place . --exclude=__init__.py
 
-check: sort format type fix-imports
+check: sort format type fix-imports clean
 
 compile: $(REQUIREMENTS_TXT)
 
