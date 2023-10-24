@@ -10,6 +10,10 @@ Welcome to tinylang's documentation!
    :maxdepth: 2
    :caption: Contents:
 
+   intro
+   installation
+
+
 
 
 Indices and tables
