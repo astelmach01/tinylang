@@ -49,20 +49,12 @@ class OpenAI(BaseLLM):
 
         self.memory.add_user_message(message=prompt, prefix=prefix, image=image)
 
-        if image is not None:
-            api_response: OpenAIObject = openai.ChatCompletion.create(
-                model=self.model,
-                messages=self.memory.format_messages(style="openai"),
-                image=image.to_numpy(),
-                **self.kwargs,
-            )
-
-        else:
-            api_response: OpenAIObject = openai.ChatCompletion.create(  # type: ignore
-                model=self.model,
-                messages=self.memory.format_messages(style="openai"),
-                **self.kwargs,
-            )
+        api_response: OpenAIObject = openai.ChatCompletion.create(
+            model=self.model,
+            messages=self.memory.format_messages(style="openai"),
+            image=image.to_numpy() if image is not None else None,
+            **self.kwargs,
+        )
 
         chat_response: str = api_response["choices"][0]["message"]["content"]
         self.memory.add_assistant_message(chat_response)
