@@ -72,7 +72,7 @@ def test_user_message_creation_with_image(loaded_image):
 def test_user_message_to_json_with_image(loaded_image):
     user_image = Image(loaded_image)
     message_with_image = UserMessage(
-        content="Hello with image", prefix="User", image=user_image.to_numpy()
+        content="Hello with image", prefix="User", image=user_image
     )
     json_data = message_with_image.to_json()
     assert "image" in json_data
@@ -82,7 +82,7 @@ def test_user_message_to_json_with_image(loaded_image):
 def test_user_message_copy(loaded_image):
     user_image = Image(loaded_image)
     message_with_image = UserMessage(
-        content="Hello with image", prefix="User", image=user_image.to_numpy()
+        content="Hello with image", prefix="User", image=user_image
     )
     copied_message = message_with_image.copy()
     assert np.array_equal(copied_message.image, loaded_image)
@@ -93,10 +93,10 @@ def test_user_message_copy(loaded_image):
 def test_user_message_str_and_repr(loaded_image):
     user_image = Image(loaded_image)
     message_with_image = UserMessage(
-        content="Hello with image", prefix="User", image=user_image.to_numpy()
+        content="Hello with image", prefix="User", image=user_image
     )
-    repr(message_with_image)
     assert str(message_with_image) == "User: Hello with image"
-    assert f"UserMessage(User, Hello with image, {str(user_image.image_data)})" in repr(
-        message_with_image
+    assert (
+        f"UserMessage(User, Hello with image, tinylang.images.Image object of size: {str(user_image.image_data.shape)})"
+        in repr(message_with_image)
     )
