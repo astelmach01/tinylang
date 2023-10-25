@@ -50,4 +50,8 @@ publish: clean
 bump-version:
 	git add .
 	git commit -m "Bump version"
+	git push
 	bump2version patch  # use 'minor' or 'major' for bigger changes
+	git add .
+	git commit -m "Bump version"
+	git push
