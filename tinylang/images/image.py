@@ -1,5 +1,6 @@
 import base64
 import io
+from typing import Dict
 
 import numpy as np
 from PIL import Image as PillowImage
@@ -33,7 +34,7 @@ class Image:
     def from_skimage(cls, skimage_image: np.ndarray) -> "Image":
         return cls(skimage_image)
 
-    def to_dict(self) -> dict:
+    def to_dict(self) -> Dict:
         """
         Convert the Image object to a dictionary format suitable for JSON serialization.
         """
@@ -47,7 +48,7 @@ class Image:
         }
 
     @classmethod
-    def from_dict(cls, data: dict) -> "Image":
+    def from_dict(cls, data: Dict) -> "Image":
         """
         Construct an Image object from a dictionary (produced by to_dict).
         """

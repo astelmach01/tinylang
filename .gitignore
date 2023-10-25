@@ -4,6 +4,7 @@
 
 pypi-recovery-codes.txt
 
+.ruff_cache
 
 # ignore session_name.session
 *.session

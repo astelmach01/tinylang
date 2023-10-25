@@ -18,9 +18,7 @@ def function(f: Callable[..., Any]) -> Dict[str, Any]:
         )
         fields_dict[name] = (type_, default_value)
 
-    input_model = create_model(
-        f"InputModel_{f.__name__}", **fields_dict
-    )  # type: ignore
+    input_model = create_model(f"InputModel_{f.__name__}", **fields_dict)  # type: ignore
 
     # Generate JSON schema
     schema = input_model.model_json_schema()

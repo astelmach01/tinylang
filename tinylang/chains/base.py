@@ -1,3 +1,5 @@
+from typing import List
+
 from openai.openai_object import OpenAIObject
 
 from tinylang.llms.base import BaseLLM
@@ -12,10 +14,12 @@ class Chain:
         llm: BaseLLM,
         memory: BaseMemory | None = None,
         prompt: str | SystemMessage | None = None,
+        tools: List | None = None,
     ) -> None:
         self.llm = llm
         self.memory = memory or ConversationMemory()
         self.llm.memory = self.memory
+        self.tools = tools
 
         if isinstance(prompt, SystemMessage):
             self.memory.add_message(prompt)

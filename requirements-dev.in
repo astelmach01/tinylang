@@ -1,15 +1,11 @@
 mypy
-autoflake
-flake8
-isort
-black[jupyter]
+ruff
 python-dotenv
 types-Pillow
 
 pytest
 pytest-mock
 pre-commit
-pydantic==2.4.2
 
 wheel
 types-setuptools
@@ -17,6 +13,7 @@ bump2version
 twine
 python-semantic-release
 setuptools
+typed-ast==1.5.5
 
 jupyter
 
