@@ -1,5 +1,5 @@
 import os
-from typing import Any, Dict, Generator
+from typing import Any, Dict, Generator, MutableSequence
 
 import openai
 from openai.openai_object import OpenAIObject
@@ -7,7 +7,7 @@ from openai.openai_object import OpenAIObject
 from tinylang.images import Image
 from tinylang.llms.base import BaseLLM
 from tinylang.memory.base import BaseMemory
-from tinylang.messages import UserMessage
+from tinylang.messages import UserMessage, BaseMessage
 
 
 class OpenAI(BaseLLM):
@@ -41,13 +41,19 @@ class OpenAI(BaseLLM):
     ) -> str | OpenAIObject:
         # TODO: move this elsewhere
         # be consistent with the prefix
-        prefix = "user"
-        for message in self.memory.messages:
-            if isinstance(message, UserMessage):
-                prefix = message.prefix
-                break
+        def get_prefix(messages: MutableSequence[BaseMessage]) -> str:
+            return next(
+                (
+                    message.prefix
+                    for message in messages
+                    if isinstance(message, UserMessage)
+                ),
+                "user",
+            )
 
-        self.memory.add_user_message(message=prompt, prefix=prefix, image=image)
+        self.memory.add_user_message(
+            message=prompt, prefix=get_prefix(self.memory.messages), image=image
+        )
 
         api_response: OpenAIObject = openai.ChatCompletion.create(
             model=self.model,
