@@ -34,6 +34,9 @@ class Image:
     def from_skimage(cls, skimage_image: np.ndarray) -> "Image":
         return cls(skimage_image)
 
+    def to_bytes(self) -> bytes:
+        return self.image_data.tobytes()
+
     def to_dict(self) -> Dict:
         """
         Convert the Image object to a dictionary format suitable for JSON serialization.

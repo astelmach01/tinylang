@@ -39,12 +39,15 @@ class OpenAI(BaseLLM):
     def chat(
         self, prompt: str, raw_response: bool = False, image: Image | None = None
     ) -> str | OpenAIObject:
-        # take care of the image
-        np_image = image.to_numpy() if image else None
+        # TODO: move this elsewhere
+        # be consistent with the prefix
+        prefix = "user"
+        for message in self.memory.messages:
+            if isinstance(message, UserMessage):
+                prefix = message.prefix
+                break
 
-        # add the message to the memory
-        message = UserMessage(prompt, image=np_image)
-        self.memory.add_message(message)
+        self.memory.add_user_message(message=prompt, prefix=prefix, image=image)
 
         api_response: OpenAIObject = openai.ChatCompletion.create(
             model=self.model,

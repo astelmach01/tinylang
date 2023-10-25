@@ -5,6 +5,7 @@ from typing import Dict, List
 from ..messages import AssistantMessage, SystemMessage, UserMessage
 from ..messages.base import BaseMessage
 from .base import BaseMemory
+from tinylang.images import Image
 
 
 @dataclass
@@ -39,8 +40,10 @@ class ConversationMemory(BaseMemory):
     def add_message(self, message: BaseMessage) -> None:
         self.messages.append(message)
 
-    def add_user_message(self, message: str) -> None:
-        self.add_message(UserMessage(message))
+    def add_user_message(
+        self, message: str, prefix: str = "user", image: Image | None = None
+    ) -> None:
+        self.add_message(UserMessage(message, prefix, image))
 
     def add_system_message(self, message: str) -> None:
         self.add_message(SystemMessage(message))

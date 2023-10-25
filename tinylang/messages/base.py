@@ -2,8 +2,7 @@ from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from typing import Dict
 
-import numpy as np
-
+from tinylang.images import Image
 from .utils import from_json
 
 
@@ -11,11 +10,9 @@ from .utils import from_json
 class BaseMessage(ABC):
     prefix: str
     content: str
-    image: np.ndarray | None
+    image: Image | None
 
-    def __init__(
-        self, content: str, prefix: str, image: np.ndarray | None = None
-    ) -> None:
+    def __init__(self, content: str, prefix: str, image: Image | None = None) -> None:
         self.content = content
         self.prefix = prefix
         self.image = image
@@ -24,10 +21,10 @@ class BaseMessage(ABC):
         result = {"role": self.prefix, "content": self.content}
 
         if style == "openai" and self.image is not None:
-            result["image"] = self.image  # type: ignore
+            result["image"] = self.image.to_numpy()  # type: ignore
 
         elif style == "copy" and self.image is not None:
-            result["image"] = self.image  # type: ignore
+            result["image"] = self.image.to_numpy()  # type: ignore
         return result
 
     @staticmethod

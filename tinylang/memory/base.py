@@ -3,6 +3,7 @@ from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from typing import Dict, List, MutableSequence
 
+from tinylang.images import Image
 from ..messages.base import BaseMessage
 
 
@@ -16,7 +17,9 @@ class BaseMemory(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    def add_user_message(self, message: str) -> None:
+    def add_user_message(
+        self, message: str, prefix: str = "user", image: Image | None = None
+    ) -> None:
         raise NotImplementedError
 
     @abstractmethod
