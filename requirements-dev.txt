@@ -28,8 +28,6 @@ attrs==23.1.0
     # via
     #   jsonschema
     #   referencing
-autoflake==2.2.1
-    # via -r requirements-dev.in
 babel==2.12.1
     # via
     #   jupyterlab-server
@@ -38,8 +36,6 @@ backcall==0.2.0
     # via ipython
 beautifulsoup4==4.12.2
     # via nbconvert
-black[jupyter]==23.9.1
-    # via -r requirements-dev.in
 bleach==6.0.0
     # via nbconvert
 bump2version==1.0.1
@@ -53,9 +49,7 @@ cfgv==3.4.0
 charset-normalizer==3.2.0
     # via requests
 click==8.1.7
-    # via
-    #   black
-    #   python-semantic-release
+    # via python-semantic-release
 comm==0.1.4
     # via
     #   ipykernel
@@ -80,8 +74,6 @@ fastjsonschema==2.18.1
     # via nbformat
 filelock==3.12.4
     # via virtualenv
-flake8==6.1.0
-    # via -r requirements-dev.in
 fqdn==1.5.1
     # via jsonschema
 gitdb==4.0.10
@@ -113,7 +105,6 @@ ipykernel==6.25.2
     #   qtconsole
 ipython==8.16.1
     # via
-    #   black
     #   ipykernel
     #   ipywidgets
     #   jupyter-console
@@ -123,8 +114,6 @@ ipywidgets==8.1.1
     # via jupyter
 isoduration==20.11.0
     # via jsonschema
-isort==5.12.0
-    # via -r requirements-dev.in
 jaraco-classes==3.3.0
     # via keyring
 jedi==0.19.1
@@ -205,8 +194,6 @@ matplotlib-inline==0.1.6
     # via
     #   ipykernel
     #   ipython
-mccabe==0.7.0
-    # via flake8
 mdurl==0.1.2
     # via markdown-it-py
 mistune==3.0.2
@@ -216,9 +203,7 @@ more-itertools==10.1.0
 mypy==1.5.1
     # via -r requirements-dev.in
 mypy-extensions==1.0.0
-    # via
-    #   black
-    #   mypy
+    # via mypy
 nbclient==0.8.0
     # via nbconvert
 nbconvert==7.8.0
@@ -246,7 +231,6 @@ overrides==7.4.0
     # via jupyter-server
 packaging==23.1
     # via
-    #   black
     #   ipykernel
     #   jupyter-server
     #   jupyterlab
@@ -260,8 +244,6 @@ pandocfilters==1.5.0
     # via nbconvert
 parso==0.8.3
     # via jedi
-pathspec==0.11.2
-    # via black
 pexpect==4.8.0
     # via ipython
 pickleshare==0.7.5
@@ -270,7 +252,6 @@ pkginfo==1.9.6
     # via twine
 platformdirs==3.10.0
     # via
-    #   black
     #   jupyter-core
     #   virtualenv
 pluggy==1.3.0
@@ -291,20 +272,12 @@ ptyprocess==0.7.0
     #   terminado
 pure-eval==0.2.2
     # via stack-data
-pycodestyle==2.11.0
-    # via flake8
 pycparser==2.21
     # via cffi
 pydantic==2.4.2
-    # via
-    #   -r requirements-dev.in
-    #   python-semantic-release
+    # via python-semantic-release
 pydantic-core==2.10.1
     # via pydantic
-pyflakes==3.1.0
-    # via
-    #   autoflake
-    #   flake8
 pygments==2.16.1
     # via
     #   ipython
@@ -384,6 +357,8 @@ rpds-py==0.10.3
     # via
     #   jsonschema
     #   referencing
+ruff==0.1.2
+    # via -r requirements-dev.in
 send2trash==1.8.2
     # via jupyter-server
 shellingham==1.5.3
@@ -430,8 +405,6 @@ terminado==0.17.1
     #   jupyter-server-terminals
 tinycss2==1.2.1
     # via nbconvert
-tokenize-rt==5.2.0
-    # via black
 tomlkit==0.12.1
     # via python-semantic-release
 tornado==6.3.3
@@ -460,6 +433,8 @@ traitlets==5.10.1
     #   nbformat
     #   qtconsole
 twine==4.0.2
+    # via -r requirements-dev.in
+typed-ast==1.5.5
     # via -r requirements-dev.in
 types-pillow==10.1.0.0
     # via -r requirements-dev.in

@@ -7,22 +7,15 @@ REQUIREMENTS_IN = requirements.in
 # The generated requirements.txt file
 REQUIREMENTS_TXT = requirements.txt
 
-.PHONY: compile install push sort format type check fix-imports publish clean
-
-sort:
-	isort .
+.PHONY: compile install push  format type check publish clean
 
 format:
-	black .
+	ruff format .
 
 type:
 	mypy .
 
-
-fix-imports:
-	autoflake --remove-all-unused-imports --recursive --remove-unused-variables --in-place . --exclude=__init__.py
-
-check: sort format type fix-imports clean
+check: format type clean
 
 compile: $(REQUIREMENTS_TXT)
 
