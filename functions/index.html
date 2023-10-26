@@ -378,13 +378,6 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#function-metadata" class="md-nav__link">
-    Function Metadata
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
   <a href="#using-functions-with-chat-models" class="md-nav__link">
     Using Functions with Chat Models
   </a>
@@ -487,13 +480,6 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#function-metadata" class="md-nav__link">
-    Function Metadata
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
   <a href="#using-functions-with-chat-models" class="md-nav__link">
     Using Functions with Chat Models
   </a>
@@ -528,7 +514,7 @@
 <h1 id="working-with-functions-in-tinylang">Working with Functions in Tinylang<a class="headerlink" href="#working-with-functions-in-tinylang" title="Permanent link">&para;</a></h1>
 <h2 id="introduction">Introduction<a class="headerlink" href="#introduction" title="Permanent link">&para;</a></h2>
 <p>Functions in Tinylang enable you to define callable operations with metadata. These functions can be used in conjunction with chat models to extend their capabilities.</p>
-<p>🚧 <strong>Note</strong>: Functions and Agents are under active development. This is the intended API and does not work yet. 🚧</p>
+<p>🚧 <strong>Note</strong>: Functions and Agents are under active development. This is the intended API and passing functions into LLMs is not supported yet. 🚧</p>
 <h2 id="defining-a-function">Defining a Function<a class="headerlink" href="#defining-a-function" title="Permanent link">&para;</a></h2>
 <p>To define a function, use the <code>@function</code> decorator. The function should take named arguments and can include a docstring for description.</p>
 <div class="language-python highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">tinylang.functions</span> <span class="kn">import</span> <span class="n">function</span>
@@ -539,29 +525,43 @@
 <span class="sd">    Adds two numbers</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">a</span> <span class="o">+</span> <span class="n">b</span>
-</code></pre></div>
-<h2 id="function-metadata">Function Metadata<a class="headerlink" href="#function-metadata" title="Permanent link">&para;</a></h2>
-<p>Once defined, the function metadata can be accessed as follows:</p>
-<div class="language-python highlight"><pre><span></span><code><span class="n">functions</span> <span class="o">=</span> <span class="p">[</span><span class="n">add</span><span class="p">]</span>
+
+<span class="nd">@function</span>
+<span class="k">def</span> <span class="nf">subtract</span><span class="p">(</span><span class="n">a</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">b</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Subtracts two numbers</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">a</span> <span class="o">-</span> <span class="n">b</span>
+
+
+
+<span class="n">functions</span> <span class="o">=</span> <span class="p">[</span><span class="n">add</span><span class="p">,</span> <span class="n">subtract</span><span class="p">]</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">functions</span><span class="p">)</span>
 </code></pre></div>
-<p>This will output a list containing the function metadata, including name, description, and parameters.</p>
+<div class="language-text highlight"><pre><span></span><code>[{&#39;name&#39;: &#39;add&#39;,
+  &#39;description&#39;: &#39;\n    Adds two numbers\n    &#39;,
+  &#39;parameters&#39;: {&#39;properties&#39;: {&#39;a&#39;: {&#39;type&#39;: &#39;integer&#39;},
+    &#39;b&#39;: {&#39;type&#39;: &#39;integer&#39;}},
+   &#39;required&#39;: [&#39;a&#39;, &#39;b&#39;],
+   &#39;type&#39;: &#39;object&#39;}},
+ {&#39;name&#39;: &#39;subtract&#39;,
+  &#39;description&#39;: &#39;\n    Subtracts two numbers\n    &#39;,
+  &#39;parameters&#39;: {&#39;properties&#39;: {&#39;a&#39;: {&#39;type&#39;: &#39;integer&#39;},
+    &#39;b&#39;: {&#39;type&#39;: &#39;integer&#39;}},
+   &#39;required&#39;: [&#39;a&#39;, &#39;b&#39;],
+   &#39;type&#39;: &#39;object&#39;}}]
+</code></pre></div>
 <h2 id="using-functions-with-chat-models">Using Functions with Chat Models<a class="headerlink" href="#using-functions-with-chat-models" title="Permanent link">&para;</a></h2>
-<p>The <code>functions</code> parameter in the Chat Completion API can be used to provide function specifications. The chat model can then generate function arguments that adhere to these specifications.</p>
-<div class="language-python highlight"><pre><span></span><code><span class="n">functions</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="p">{</span>
-        <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;add&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;description&quot;</span><span class="p">:</span> <span class="s2">&quot;Adds two numbers&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;parameters&quot;</span><span class="p">:</span> <span class="p">{</span>
-            <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;object&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;properties&quot;</span><span class="p">:</span> <span class="p">{</span>
-                <span class="s2">&quot;a&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;integer&quot;</span><span class="p">},</span>
-                <span class="s2">&quot;b&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;integer&quot;</span><span class="p">}</span>
-            <span class="p">},</span>
-            <span class="s2">&quot;required&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;a&quot;</span><span class="p">,</span> <span class="s2">&quot;b&quot;</span><span class="p">]</span>
-        <span class="p">}</span>
-    <span class="p">}</span>
-<span class="p">]</span>
+<p>The <code>functions</code> parameter can be passed into the kwargs of the <code>.chat</code> method, making it visible to the LLM. If the LLM chooses the call the function, then it will output accompanying parameters to call.</p>
+<div class="language-python highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">tinylang.llms</span> <span class="kn">import</span> <span class="n">OpenAI</span>
+
+<span class="n">chatGPT</span> <span class="o">=</span> <span class="n">OpenAI</span><span class="p">(</span>
+    <span class="n">openai_api_key</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+    <span class="n">openai_organization</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+    <span class="n">model</span><span class="o">=</span><span class="s2">&quot;gpt-3.5-turbo&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">chatGPT</span><span class="o">.</span><span class="n">chat</span><span class="p">(</span><span class="s2">&quot;hello&quot;</span><span class="p">,</span> <span class="n">functions</span><span class="o">=</span><span class="n">functions</span><span class="p">)</span>
 </code></pre></div>
 <p>Note that the API will not actually execute any function calls. It is up to developers to execute function calls using model outputs.</p>
 <h2 id="next-steps">Next Steps<a class="headerlink" href="#next-steps" title="Permanent link">&para;</a></h2>
