@@ -8,6 +8,8 @@
       
       
       
+        <link rel="canonical" href="https://astelmach01.github.io/tinylang/getting_started/">
+      
       
         <link rel="prev" href="..">
       
@@ -385,6 +387,13 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#quick-start" class="md-nav__link">
+    Quick Start
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#next-steps" class="md-nav__link">
     Next Steps
   </a>
@@ -565,6 +574,13 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#quick-start" class="md-nav__link">
+    Quick Start
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#next-steps" class="md-nav__link">
     Next Steps
   </a>
@@ -619,6 +635,29 @@ python3<span class="w"> </span>get-pip.py
 <h3 id="on-windows_1">On Windows:<a class="headerlink" href="#on-windows_1" title="Permanent link">&para;</a></h3>
 <p>Download <a href="https://bootstrap.pypa.io/get-pip.py">get-pip.py</a> to a folder on your computer. Open a command prompt from within the Start menu, navigate to the folder containing <code>get-pip.py</code>, and run:</p>
 <div class="language-bash highlight"><pre><span></span><code>python<span class="w"> </span>get-pip.py
+</code></pre></div>
+<h2 id="quick-start">Quick Start<a class="headerlink" href="#quick-start" title="Permanent link">&para;</a></h2>
+<div class="language-python highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">tinylang.chains</span> <span class="kn">import</span> <span class="n">Chain</span>
+<span class="kn">from</span> <span class="nn">tinylang.llms</span> <span class="kn">import</span> <span class="n">OpenAI</span>
+<span class="kn">from</span> <span class="nn">tinylang.memory</span> <span class="kn">import</span> <span class="n">ConversationMemory</span>
+
+<span class="n">model</span> <span class="o">=</span> <span class="s2">&quot;gpt-3.5-turbo&quot;</span>
+
+<span class="n">chatGPT</span> <span class="o">=</span> <span class="n">OpenAI</span><span class="p">(</span>
+    <span class="n">openai_api_key</span><span class="o">=</span><span class="n">openai_api_key</span><span class="p">,</span>
+    <span class="n">openai_organization</span><span class="o">=</span><span class="n">openai_organization</span><span class="p">,</span>
+    <span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">memory</span> <span class="o">=</span> <span class="n">ConversationMemory</span><span class="p">()</span>
+
+<span class="n">chain</span> <span class="o">=</span> <span class="n">Chain</span><span class="p">(</span>
+    <span class="n">llm</span><span class="o">=</span><span class="n">chatGPT</span><span class="p">,</span>
+    <span class="n">memory</span><span class="o">=</span><span class="n">memory</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">prompt</span> <span class="o">=</span> <span class="s2">&quot;Hello&quot;</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">chain</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">prompt</span><span class="p">))</span>
 </code></pre></div>
 <h2 id="next-steps">Next Steps<a class="headerlink" href="#next-steps" title="Permanent link">&para;</a></h2>
 <ul>
