@@ -1,11 +1,10 @@
-# Working with Images in Tinylang
+# 🖼️ Working with Images in Tinylang
 
-## Introduction
+## 📝 Introduction
 
 Tinylang provides a flexible interface for working with images. This guide will walk you through how to use images in various formats and include them in conversations.
 
-
-## Initializing an Image
+## 🏁 Initializing an Image
 
 Tinylang supports initializing images from various formats including NumPy arrays, Pillow images, OpenCV images, and more.
 
@@ -37,11 +36,12 @@ bytes_image = open("image.png", "rb").read()
 image_from_bytes = Image.from_bytes(bytes_image)
 ```
 
-## Using Images in Conversations
+## 💬 Using Images in Conversations
 
 Images can be included in user messages and stored in conversation memory.
 
 ```python
+from tinylang.images import Image
 from tinylang.messages import UserMessage
 from tinylang.memory import ConversationMemory
 
@@ -51,10 +51,12 @@ chatGPT = OpenAI(
     model="gpt-3.5-turbo", openai_organization="", openai_api_key="", memory=memory
 )
 
+user_image = Image.from(np_image)
+
 chatGPT.chat("What is this?", image=user_image)
 ```
 
-## Next Steps
+## 🗺️ Next Steps
 
 - Learn how to [work with Functions](functions.md)
 - Dive into [ConversationMemory](conversation_memory.md)

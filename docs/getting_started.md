@@ -1,10 +1,9 @@
-# Getting Started with Tinylang
+# 🚀 Getting Started with Tinylang
 
-## Prerequisites
+## 📋 Prerequisites
 
-- Python 3.x
-- pip (Python package installer)
-
+- 🐍 Python 3.x
+- 📦 pip (Python package installer)
 
 To install Tinylang, run:
 
@@ -12,9 +11,9 @@ To install Tinylang, run:
 pip install tinylang
 ```
 
-## Installing Python
+## 🐍 Installing Python
 
-If you don't have Python installed, you can download it from the [official Python website](https://www.python.org/downloads/).
+If you don't have Python installed, you can download it from the [🌐 official Python website](https://www.python.org/downloads/).
 
 ### On macOS and Linux:
 
@@ -33,7 +32,7 @@ sudo apt install python3
 
 ### On Windows:
 
-Download the installer from the [official Python website](https://www.python.org/downloads/windows/) and follow the installation instructions.
+Download the installer from the [🌐 official Python website](https://www.python.org/downloads/windows/) and follow the installation instructions.
 
 ## Installing pip
 
@@ -54,9 +53,7 @@ Download [get-pip.py](https://bootstrap.pypa.io/get-pip.py) to a folder on your 
 python get-pip.py
 ```
 
-
 ## Quick Start
-
 
 ```python
 from tinylang.chains import Chain
@@ -84,7 +81,7 @@ print(chain.run(prompt))
 
 ## Next Steps
 
-- [Working with Chains](chains.md)
-- [Working with Functions](functions.md)
-- [Working with Images](images.md)
-- [Conversation Memory](conversation_memory.md)
+- [⛓️ Working with Chains](chains.md)
+- [🔧 Working with Functions](functions.md)
+- [🖼️ Working with Images](images.md)
+- [🧠 Conversation Memory](conversation_memory.md)
