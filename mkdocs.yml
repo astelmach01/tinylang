@@ -3,7 +3,7 @@ site_url: https://astelmach01.github.io/tinylang/
 
 nav:
   - 'Introduction': 'index.md'
-  - 'Getting Started': 'getting_started.md'
+  - 'Getting Started + Quick Start': 'getting_started.md'
   - 'Working with Chains': 'chains.md'
   - 'Working with Functions': 'functions.md'
   - 'Working with Images': 'images.md'
