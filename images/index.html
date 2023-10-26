@@ -384,28 +384,28 @@
       
         <li class="md-nav__item">
   <a href="#introduction" class="md-nav__link">
-    Introduction
+    📝 Introduction
   </a>
   
 </li>
       
         <li class="md-nav__item">
   <a href="#initializing-an-image" class="md-nav__link">
-    Initializing an Image
+    🏁 Initializing an Image
   </a>
   
 </li>
       
         <li class="md-nav__item">
   <a href="#using-images-in-conversations" class="md-nav__link">
-    Using Images in Conversations
+    💬 Using Images in Conversations
   </a>
   
 </li>
       
         <li class="md-nav__item">
   <a href="#next-steps" class="md-nav__link">
-    Next Steps
+    🗺️ Next Steps
   </a>
   
 </li>
@@ -467,28 +467,28 @@
       
         <li class="md-nav__item">
   <a href="#introduction" class="md-nav__link">
-    Introduction
+    📝 Introduction
   </a>
   
 </li>
       
         <li class="md-nav__item">
   <a href="#initializing-an-image" class="md-nav__link">
-    Initializing an Image
+    🏁 Initializing an Image
   </a>
   
 </li>
       
         <li class="md-nav__item">
   <a href="#using-images-in-conversations" class="md-nav__link">
-    Using Images in Conversations
+    💬 Using Images in Conversations
   </a>
   
 </li>
       
         <li class="md-nav__item">
   <a href="#next-steps" class="md-nav__link">
-    Next Steps
+    🗺️ Next Steps
   </a>
   
 </li>
@@ -511,10 +511,10 @@
   
 
 
-<h1 id="working-with-images-in-tinylang">Working with Images in Tinylang<a class="headerlink" href="#working-with-images-in-tinylang" title="Permanent link">&para;</a></h1>
-<h2 id="introduction">Introduction<a class="headerlink" href="#introduction" title="Permanent link">&para;</a></h2>
+<h1 id="working-with-images-in-tinylang">🖼️ Working with Images in Tinylang<a class="headerlink" href="#working-with-images-in-tinylang" title="Permanent link">&para;</a></h1>
+<h2 id="introduction">📝 Introduction<a class="headerlink" href="#introduction" title="Permanent link">&para;</a></h2>
 <p>Tinylang provides a flexible interface for working with images. This guide will walk you through how to use images in various formats and include them in conversations.</p>
-<h2 id="initializing-an-image">Initializing an Image<a class="headerlink" href="#initializing-an-image" title="Permanent link">&para;</a></h2>
+<h2 id="initializing-an-image">🏁 Initializing an Image<a class="headerlink" href="#initializing-an-image" title="Permanent link">&para;</a></h2>
 <p>Tinylang supports initializing images from various formats including NumPy arrays, Pillow images, OpenCV images, and more.</p>
 <div class="language-python highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">tinylang.images</span> <span class="kn">import</span> <span class="n">Image</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
@@ -542,9 +542,10 @@
 <span class="n">bytes_image</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;image.png&quot;</span><span class="p">,</span> <span class="s2">&quot;rb&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
 <span class="n">image_from_bytes</span> <span class="o">=</span> <span class="n">Image</span><span class="o">.</span><span class="n">from_bytes</span><span class="p">(</span><span class="n">bytes_image</span><span class="p">)</span>
 </code></pre></div>
-<h2 id="using-images-in-conversations">Using Images in Conversations<a class="headerlink" href="#using-images-in-conversations" title="Permanent link">&para;</a></h2>
+<h2 id="using-images-in-conversations">💬 Using Images in Conversations<a class="headerlink" href="#using-images-in-conversations" title="Permanent link">&para;</a></h2>
 <p>Images can be included in user messages and stored in conversation memory.</p>
-<div class="language-python highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">tinylang.messages</span> <span class="kn">import</span> <span class="n">UserMessage</span>
+<div class="language-python highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">tinylang.images</span> <span class="kn">import</span> <span class="n">Image</span>
+<span class="kn">from</span> <span class="nn">tinylang.messages</span> <span class="kn">import</span> <span class="n">UserMessage</span>
 <span class="kn">from</span> <span class="nn">tinylang.memory</span> <span class="kn">import</span> <span class="n">ConversationMemory</span>
 
 <span class="n">memory</span> <span class="o">=</span> <span class="n">ConversationMemory</span><span class="p">(</span><span class="n">last_k</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
@@ -553,9 +554,11 @@
     <span class="n">model</span><span class="o">=</span><span class="s2">&quot;gpt-3.5-turbo&quot;</span><span class="p">,</span> <span class="n">openai_organization</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">openai_api_key</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">memory</span><span class="o">=</span><span class="n">memory</span>
 <span class="p">)</span>
 
+<span class="n">user_image</span> <span class="o">=</span> <span class="n">Image</span><span class="o">.</span><span class="n">from</span><span class="p">(</span><span class="n">np_image</span><span class="p">)</span>
+
 <span class="n">chatGPT</span><span class="o">.</span><span class="n">chat</span><span class="p">(</span><span class="s2">&quot;What is this?&quot;</span><span class="p">,</span> <span class="n">image</span><span class="o">=</span><span class="n">user_image</span><span class="p">)</span>
 </code></pre></div>
-<h2 id="next-steps">Next Steps<a class="headerlink" href="#next-steps" title="Permanent link">&para;</a></h2>
+<h2 id="next-steps">🗺️ Next Steps<a class="headerlink" href="#next-steps" title="Permanent link">&para;</a></h2>
 <ul>
 <li>Learn how to <a href="../functions/">work with Functions</a></li>
 <li>Dive into <a href="../conversation_memory/">ConversationMemory</a></li>
