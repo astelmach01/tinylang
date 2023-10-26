@@ -1,0 +1,82 @@
+site_name: tinylang
+site_url: https://astelmach01.github.io/tinylang/
+
+nav:
+  - 'Introduction': 'index.md'
+  - 'Getting Started': 'getting_started.md'
+  - 'Working with Chains': 'chains.md'
+  - 'Working with Functions': 'functions.md'
+  - 'Working with Images': 'images.md'
+  - 'Conversation Memory': 'conversation_memory.md'
+
+theme:
+  name: material
+  language: en
+
+
+  font:
+    text: Roboto
+    code: Roboto Mono
+
+  features:
+    - search.suggest
+    - search.highlight
+    - search.share
+
+    - navigation.instant
+    - navigation.instant.prefetch
+    - navigation.instant.progress
+    - navigation.tracking
+
+    - announce.dismiss
+
+    - content.tabs.link
+    - content.code.annotate
+    - content.code.copy
+
+  palette:
+    - scheme: default
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    - scheme: slate
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+
+
+
+repo_name: tinylang/tinylang
+repo_url: https://github.com/astelmach01/tinylang
+
+
+plugins:
+  - search
+
+
+markdown_extensions:
+- tables
+- toc:
+    permalink: true
+    title: Page contents
+- admonition
+- pymdownx.details
+- pymdownx.superfences
+- pymdownx.highlight:
+    pygments_lang_class: true
+- pymdownx.tabbed:
+    alternate_style: true
+
+
+extra:
+  consent:
+    title: Cookie consent
+    description: >-
+      We use cookies to recognize your repeated visits and preferences, as well
+      as to measure the effectiveness of our documentation and whether users
+      find what they're searching for. With your consent, you're helping us to
+      make our documentation better.
+
+copyright: >
+  Copyright &copy; 2023 Andrew Stelmach –
+  <a href="#__consent">Change cookie settings</a>

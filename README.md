@@ -1,5 +1,5 @@
 # 🦜🔗🔍 Tinylang
-[![Documentation Status](https://readthedocs.org/projects/tinylang/badge/?version=latest)](https://tinylang.readthedocs.io/en/latest/?badge=latest)
+[Documentation](https://astelmach01.github.io/tinylang/)
 
 
 Make working with LLMs insanely simpler and easier than ever before.
@@ -20,8 +20,6 @@ pip install tinylang
 
 ## Usage
 
-[Documentation](https://tinylang.readthedocs.io/en/latest/) is a WIP right now,
-see `examples` for the time being!
 
 ```
 from tinylang.chains import Chain

@@ -17,4 +17,4 @@ typed-ast==1.5.5
 
 jupyter
 
-sphinx
+mkdocs-material[imaging]

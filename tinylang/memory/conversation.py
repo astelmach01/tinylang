@@ -24,6 +24,8 @@ class ConversationMemory(BaseMemory):
         self._last_k_messages = None if last_k is None else last_k * 2
         # * 2 to keep assistant and user messages
 
+        # TODO: fix bug if using a system message
+
         # use a deque to keep the last k messages
         self.messages = deque(self.messages, maxlen=self._last_k_messages)
 
