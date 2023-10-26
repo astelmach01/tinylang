@@ -4,8 +4,6 @@
 #
 #    pip-compile --output-file=requirements-dev.txt requirements-dev.in
 #
-alabaster==0.7.13
-    # via sphinx
 annotated-types==0.5.0
     # via pydantic
 anyio==4.0.0
@@ -31,7 +29,7 @@ attrs==23.1.0
 babel==2.12.1
     # via
     #   jupyterlab-server
-    #   sphinx
+    #   mkdocs-material
 backcall==0.2.0
     # via ipython
 beautifulsoup4==4.12.2
@@ -40,32 +38,44 @@ bleach==6.0.0
     # via nbconvert
 bump2version==1.0.1
     # via -r requirements-dev.in
+cairocffi==1.6.1
+    # via cairosvg
+cairosvg==2.7.1
+    # via mkdocs-material
 certifi==2023.7.22
     # via requests
 cffi==1.16.0
-    # via argon2-cffi-bindings
+    # via
+    #   argon2-cffi-bindings
+    #   cairocffi
 cfgv==3.4.0
     # via pre-commit
 charset-normalizer==3.2.0
     # via requests
 click==8.1.7
-    # via python-semantic-release
+    # via
+    #   mkdocs
+    #   python-semantic-release
+colorama==0.4.6
+    # via mkdocs-material
 comm==0.1.4
     # via
     #   ipykernel
     #   ipywidgets
+cssselect2==0.7.0
+    # via cairosvg
 debugpy==1.8.0
     # via ipykernel
 decorator==5.1.1
     # via ipython
 defusedxml==0.7.1
-    # via nbconvert
+    # via
+    #   cairosvg
+    #   nbconvert
 distlib==0.3.7
     # via virtualenv
 docutils==0.20.1
-    # via
-    #   readme-renderer
-    #   sphinx
+    # via readme-renderer
 dotty-dict==1.3.1
     # via python-semantic-release
 executing==2.0.0
@@ -76,6 +86,8 @@ filelock==3.12.4
     # via virtualenv
 fqdn==1.5.1
     # via jsonschema
+ghp-import==2.1.0
+    # via mkdocs
 gitdb==4.0.10
     # via gitpython
 gitpython==3.1.36
@@ -87,8 +99,6 @@ idna==3.4
     #   anyio
     #   jsonschema
     #   requests
-imagesize==1.4.1
-    # via sphinx
 importlib-metadata==6.8.0
     # via
     #   keyring
@@ -123,9 +133,10 @@ jinja2==3.1.2
     #   jupyter-server
     #   jupyterlab
     #   jupyterlab-server
+    #   mkdocs
+    #   mkdocs-material
     #   nbconvert
     #   python-semantic-release
-    #   sphinx
 json5==0.9.14
     # via jupyterlab-server
 jsonpointer==2.4
@@ -184,11 +195,17 @@ jupyterlab-widgets==3.0.9
     # via ipywidgets
 keyring==24.2.0
     # via twine
+markdown==3.5
+    # via
+    #   mkdocs
+    #   mkdocs-material
+    #   pymdown-extensions
 markdown-it-py==3.0.0
     # via rich
 markupsafe==2.1.3
     # via
     #   jinja2
+    #   mkdocs
     #   nbconvert
 matplotlib-inline==0.1.6
     # via
@@ -196,8 +213,16 @@ matplotlib-inline==0.1.6
     #   ipython
 mdurl==0.1.2
     # via markdown-it-py
+mergedeep==1.3.4
+    # via mkdocs
 mistune==3.0.2
     # via nbconvert
+mkdocs==1.5.3
+    # via mkdocs-material
+mkdocs-material[imaging]==9.4.6
+    # via -r requirements-dev.in
+mkdocs-material-extensions==1.3
+    # via mkdocs-material
 more-itertools==10.1.0
     # via jaraco-classes
 mypy==1.5.1
@@ -235,24 +260,33 @@ packaging==23.1
     #   jupyter-server
     #   jupyterlab
     #   jupyterlab-server
+    #   mkdocs
     #   nbconvert
     #   pytest
     #   qtconsole
     #   qtpy
-    #   sphinx
+paginate==0.5.6
+    # via mkdocs-material
 pandocfilters==1.5.0
     # via nbconvert
 parso==0.8.3
     # via jedi
+pathspec==0.11.2
+    # via mkdocs
 pexpect==4.8.0
     # via ipython
 pickleshare==0.7.5
     # via ipython
+pillow==9.5.0
+    # via
+    #   cairosvg
+    #   mkdocs-material
 pkginfo==1.9.6
     # via twine
 platformdirs==3.10.0
     # via
     #   jupyter-core
+    #   mkdocs
     #   virtualenv
 pluggy==1.3.0
     # via pytest
@@ -282,11 +316,13 @@ pygments==2.16.1
     # via
     #   ipython
     #   jupyter-console
+    #   mkdocs-material
     #   nbconvert
     #   qtconsole
     #   readme-renderer
     #   rich
-    #   sphinx
+pymdown-extensions==10.3.1
+    # via mkdocs-material
 pytest==7.4.2
     # via
     #   -r requirements-dev.in
@@ -296,6 +332,7 @@ pytest-mock==3.11.1
 python-dateutil==2.8.2
     # via
     #   arrow
+    #   ghp-import
     #   jupyter-client
 python-dotenv==1.0.0
     # via -r requirements-dev.in
@@ -308,7 +345,12 @@ python-semantic-release==8.1.1
 pyyaml==6.0.1
     # via
     #   jupyter-events
+    #   mkdocs
     #   pre-commit
+    #   pymdown-extensions
+    #   pyyaml-env-tag
+pyyaml-env-tag==0.1
+    # via mkdocs
 pyzmq==25.1.1
     # via
     #   ipykernel
@@ -327,13 +369,15 @@ referencing==0.30.2
     #   jsonschema
     #   jsonschema-specifications
     #   jupyter-events
+regex==2023.10.3
+    # via mkdocs-material
 requests==2.31.0
     # via
     #   jupyterlab-server
+    #   mkdocs-material
     #   python-gitlab
     #   python-semantic-release
     #   requests-toolbelt
-    #   sphinx
     #   twine
 requests-toolbelt==1.0.0
     # via
@@ -373,30 +417,8 @@ smmap==5.0.1
     # via gitdb
 sniffio==1.3.0
     # via anyio
-snowballstemmer==2.2.0
-    # via sphinx
 soupsieve==2.5
     # via beautifulsoup4
-sphinx==7.2.6
-    # via
-    #   -r requirements-dev.in
-    #   sphinxcontrib-applehelp
-    #   sphinxcontrib-devhelp
-    #   sphinxcontrib-htmlhelp
-    #   sphinxcontrib-qthelp
-    #   sphinxcontrib-serializinghtml
-sphinxcontrib-applehelp==1.0.7
-    # via sphinx
-sphinxcontrib-devhelp==1.0.5
-    # via sphinx
-sphinxcontrib-htmlhelp==2.0.4
-    # via sphinx
-sphinxcontrib-jsmath==1.0.1
-    # via sphinx
-sphinxcontrib-qthelp==1.0.6
-    # via sphinx
-sphinxcontrib-serializinghtml==1.1.9
-    # via sphinx
 stack-data==0.6.3
     # via ipython
 terminado==0.17.1
@@ -404,7 +426,10 @@ terminado==0.17.1
     #   jupyter-server
     #   jupyter-server-terminals
 tinycss2==1.2.1
-    # via nbconvert
+    # via
+    #   cairosvg
+    #   cssselect2
+    #   nbconvert
 tomlkit==0.12.1
     # via python-semantic-release
 tornado==6.3.3
@@ -455,6 +480,8 @@ urllib3==2.0.5
     #   twine
 virtualenv==20.24.5
     # via pre-commit
+watchdog==3.0.0
+    # via mkdocs
 wcwidth==0.2.8
     # via prompt-toolkit
 webcolors==1.13
@@ -462,6 +489,7 @@ webcolors==1.13
 webencodings==0.5.1
     # via
     #   bleach
+    #   cssselect2
     #   tinycss2
 websocket-client==1.6.3
     # via jupyter-server
