@@ -21,7 +21,7 @@ pip install tinylang
 ## Usage
 
 
-```
+```python
 from tinylang.chains import Chain
 from tinylang.llms import OpenAI
 from tinylang.memory import ConversationMemory
