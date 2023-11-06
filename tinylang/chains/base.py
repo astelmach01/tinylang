@@ -1,7 +1,5 @@
-from typing import List
-
-from openai.openai_object import OpenAIObject
-
+from typing import List, Dict
+from tinylang.images import Image
 from tinylang.llms.base import BaseLLM
 from tinylang.memory import ConversationMemory
 from tinylang.memory.base import BaseMemory
@@ -27,5 +25,11 @@ class Chain:
         elif isinstance(prompt, str):
             self.memory.add_system_message(prompt)
 
-    def run(self, prompt: str, raw_response: bool = False) -> str | OpenAIObject:
-        return self.llm.chat(prompt, raw_response)
+    def run(
+        self,
+        prompt: str,
+        raw_response: bool = False,
+        image: Image | None = None,
+        **kwargs: Dict,
+    ) -> str:
+        return self.llm.chat(prompt, raw_response, image, **kwargs)

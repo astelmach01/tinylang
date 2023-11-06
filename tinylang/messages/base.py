@@ -1,3 +1,4 @@
+import os
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from typing import Dict
@@ -9,22 +10,30 @@ from .utils import from_json
 @dataclass  # type: ignore
 class BaseMessage(ABC):
     prefix: str
-    content: str
+    text: str
     image: Image | None
+    image_dir: os.PathLike
 
-    def __init__(self, content: str, prefix: str, image: Image | None = None) -> None:
-        self.content = content
+    def __init__(
+        self,
+        text: str,
+        prefix: str,
+        image: Image | None = None,
+    ) -> None:
         self.prefix = prefix
+        self.text = text
         self.image = image
 
-    def to_json(self, style: str = "openai") -> Dict:
-        result = {"role": self.prefix, "content": self.content}
+    def to_json(self) -> Dict:
+        result = {"role": self.prefix}
 
-        if style == "openai" and self.image is not None:
-            result["image"] = self.image.to_numpy()  # type: ignore
+        content = [{"type": "text", "text": self.text}]
 
-        elif style == "copy" and self.image is not None:
-            result["image"] = self.image.to_numpy()  # type: ignore
+        if self.image is not None:
+            content.append({"type": "image_url", "image_url": self.image.to_url()})
+
+        result["content"] = content
+
         return result
 
     @staticmethod
@@ -33,15 +42,10 @@ class BaseMessage(ABC):
         return from_json(json)  # type: ignore
 
     def copy(self) -> "BaseMessage":
-        return self.from_json(self.to_json(style="copy"))
+        return self.from_json(self.to_json())
 
     def __str__(self) -> str:
-        return f"{self.prefix}: {self.content}"
+        return str(self.to_json())
 
     def __repr__(self) -> str:
-        result = f"{self.__class__.__name__}({self.prefix}, {self.content}"
-        if self.image is not None:
-            result += f", {self.image}"
-
-        result += ")"
-        return result
+        return str(self.to_json())

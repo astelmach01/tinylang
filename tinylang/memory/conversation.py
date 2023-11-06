@@ -56,8 +56,8 @@ class ConversationMemory(BaseMemory):
     def to_json(self) -> List[Dict]:
         return [message.to_json() for message in self.messages]
 
-    def format_messages(self, style: str = "openai") -> List[Dict]:
-        temp = [message.to_json(style) for message in self.messages]
+    def format_messages(self) -> List[Dict]:
+        temp = [message.to_json() for message in self.messages]
 
         if self._last_k_messages is None:
             return temp

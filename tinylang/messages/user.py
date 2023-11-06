@@ -1,12 +1,15 @@
 from typing import Dict
-from tinylang.images import Image
 
+from tinylang.images import Image
 from tinylang.messages.base import BaseMessage
 
 
 class UserMessage(BaseMessage):
     def __init__(
-        self, content: str, prefix: str = "user", image: Image | None = None
+        self,
+        content: str,
+        prefix: str = "user",
+        image: Image | None = None,
     ) -> None:
         super().__init__(content, prefix, image)
 

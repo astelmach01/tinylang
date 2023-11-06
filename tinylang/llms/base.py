@@ -2,8 +2,7 @@ import os
 from abc import ABC, abstractmethod
 from typing import Any, Dict, Generator
 
-from openai.openai_object import OpenAIObject
-
+from tinylang.images import Image
 from tinylang.memory import ConversationMemory
 from tinylang.memory.base import BaseMemory
 
@@ -26,7 +25,13 @@ class BaseLLM(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    def chat(self, prompt: str, raw_response: bool = False) -> str | OpenAIObject:
+    def chat(
+        self,
+        prompt: str,
+        raw_response: bool = False,
+        image: Image | None = None,
+        **kwargs: Dict,
+    ) -> str:
         """
         Simulates a chat interaction with the model.
 
