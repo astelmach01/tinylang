@@ -28,7 +28,7 @@ def test_get_current_weather():
             "required": ["location", "format"],
         },
     }
-    assert get_current_weather == expected
+    assert get_current_weather.schema == expected
 
 
 def test_get_n_day_weather_forecast():
@@ -45,7 +45,7 @@ def test_get_n_day_weather_forecast():
             "required": ["location", "format", "num_days"],
         },
     }
-    assert get_n_day_weather_forecast == expected
+    assert get_n_day_weather_forecast.schema == expected
 
 
 def test_get_articles_function():
@@ -72,7 +72,7 @@ def test_get_articles_function():
         },
     }
 
-    assert get_articles == expected
+    assert get_articles.schema == expected
 
 
 def test_read_article_and_summarize_function():
@@ -92,4 +92,4 @@ def test_read_article_and_summarize_function():
         },
     }
 
-    assert read_article_and_summarize == expected
+    assert read_article_and_summarize.schema == expected

@@ -1,7 +1,6 @@
 from typing import Any, Dict, Generator
 
 import pytest
-from openai.openai_object import OpenAIObject
 
 from tinylang.chains import Chain  # adjust this import as necessary
 from tinylang.llms.base import BaseLLM
@@ -15,7 +14,7 @@ class MockLLM(BaseLLM):
     def load_model(self, model_path: str) -> bool:
         return True
 
-    def chat(self, prompt: str, raw_response: bool = False) -> str | OpenAIObject:
+    def chat(self, prompt: str, raw_response: bool = False) -> str:
         return "mock response"
 
     def stream_chat(

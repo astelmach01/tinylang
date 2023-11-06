@@ -1,8 +1,7 @@
 import os
 from typing import Any, Dict, Generator
 
-import openai
-from openai.openai_object import OpenAIObject
+from openai import OpenAI as OpenAIClient
 
 from tinylang.images import Image
 from tinylang.llms.base import BaseLLM
@@ -27,8 +26,9 @@ class OpenAI(BaseLLM):
             kwargs  # kwargs passed into the openai.ChatCompletion.create() method
         )
 
-        openai.api_key = self.openai_api_key
-        openai.organization = self.openai_organization
+        self.client = OpenAIClient(
+            api_key=self.openai_api_key, organization=self.openai_organization
+        )
 
     def load_model(self, model_path: os.PathLike) -> bool:
         """
@@ -37,8 +37,12 @@ class OpenAI(BaseLLM):
         return True  # since we're using the API
 
     def chat(
-        self, prompt: str, raw_response: bool = False, image: Image | None = None
-    ) -> str | OpenAIObject:
+        self,
+        prompt: str,
+        raw_response: bool = False,
+        image: Image | None = None,
+        **kwargs: Dict,
+    ) -> str:
         # TODO: move this elsewhere
         # be consistent with the prefix
         prefix = "user"
@@ -49,35 +53,43 @@ class OpenAI(BaseLLM):
 
         self.memory.add_user_message(message=prompt, prefix=prefix, image=image)
 
-        api_response: OpenAIObject = openai.ChatCompletion.create(
-            model=self.model,
-            messages=self.memory.format_messages(style="openai"),
-            **self.kwargs,
-        )
+        completion_kwargs = self.kwargs.copy()
+        completion_kwargs.update(kwargs)
 
-        chat_response: str = api_response["choices"][0]["message"]["content"]
+        api_response = self.client.chat.completions.create(
+            model=self.model,
+            messages=self.memory.format_messages(),
+            **completion_kwargs,
+        )  # type: ignore
+
+        chat_response: str = api_response.model_dump()["choices"][0]["message"][
+            "content"
+        ]
         self.memory.add_assistant_message(chat_response)
 
         if raw_response:
-            return api_response
+            return api_response  # type: ignore
 
         return chat_response
 
     def stream_chat(
-        self, prompt: str, raw_response: bool = False
+        self, prompt: str, raw_response: bool = False, **kwargs: Dict
     ) -> Generator[Dict[str, Any], None, None]:
         self.memory.add_user_message(prompt)
 
-        api_response: OpenAIObject = openai.ChatCompletion.create(
+        completion_kwargs = self.kwargs.copy()
+        completion_kwargs.update(kwargs)
+
+        api_response = self.client.chat.completions.create(
             model=self.model,
             messages=self.memory.format_messages(),
             stream=True,
-            **self.kwargs,
-        )
+            **completion_kwargs,
+        )  # type: ignore
 
         aggregated_content = ""
         for chunk in api_response:
-            content = chunk["choices"][0]["delta"].get("content")
+            content = chunk.choices[0].delta.content or ""
 
             # if there's no content
             if not content:

@@ -34,8 +34,8 @@ class BaseMemory(ABC):
     def to_json(self) -> List[Dict]:
         raise NotImplementedError
 
-    def format_messages(self, style: str = "openai") -> List[Dict]:
-        return [message.to_json(style) for message in self.messages]
+    def format_messages(self) -> List[Dict]:
+        return [message.to_json() for message in self.messages]
 
     def __repr__(self) -> str:
         return f"{self.__class__.__name__}({self.messages})"
