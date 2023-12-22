@@ -1,6 +1,7 @@
 # 🦜🔗🔍 Tinylang
 [Documentation](https://astelmach01.github.io/tinylang/)
 
+## This is deprecated, use [OpenAI Assistants](https://platform.openai.com/docs/assistants/overview) instead.
 
 Make working with LLMs insanely simpler and easier than ever before.
 
