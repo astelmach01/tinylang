@@ -14,43 +14,9 @@ Langchain can be very cumbersome and annoying to work with. It's too big, compli
 With tinylang, everything is intuitive and customizable, following most of the Langchain API.
 
 
-## Installation
-
-```shell
-pip install tinylang
-```
-
-## Usage
 
 
-```python
-from tinylang.chains import Chain
-from tinylang.llms import OpenAI
-from tinylang.memory import ConversationMemory
-
-model = "gpt-3.5-turbo"
-
-chatGPT = OpenAI(
-    openai_api_key=openai_api_key,
-    openai_organization=openai_organization,
-    model=model,
-)
-
-memory = ConversationMemory()
-
-chain = Chain(
-    llm=chatGPT,
-    memory=memory,
-)
-
-prompt = "Hello"
-print(chain.run(prompt))
-```
-
-
-## Features
-
-- 🧠 Conversation Memory. Keep all or some aspects of your conversation
-- 🛸 OpenAI LLMs. It couldn't be easier to call the OpenAI API.
-- 💻 Prompts. Simple and hackable.
-- 🤖 Agents. Coming soon!
+- get base LLMs working (OpenAI, Gemini, Claude)
+- streaming
+- conversation history
+- function calling

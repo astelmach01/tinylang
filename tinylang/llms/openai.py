@@ -1,102 +1,78 @@
+from typing import Dict, Iterator, AsyncIterable
 import os
-from typing import Any, Dict, Generator
-
-from openai import OpenAI as OpenAIClient
-
-from tinylang.images import Image
-from tinylang.llms.base import BaseLLM
-from tinylang.memory.base import BaseMemory
-from tinylang.messages import UserMessage
+from openai import OpenAI, AsyncOpenAI
+from openai.types.chat import ChatCompletion
+from .base import ChatBase
+from .util import get_api_key
 
 
-class OpenAI(BaseLLM):
+class ChatOpenAI(ChatBase):
     def __init__(
         self,
-        openai_api_key: str,
-        openai_organization: str,
         model: str,
-        memory: BaseMemory | None = None,
-        **kwargs: Dict,
+        api_key: str | None = None,
+        init_kwargs: Dict = {},
+        system_message: str | None = None,
     ) -> None:
-        super().__init__(memory)
-        self.openai_api_key = openai_api_key
-        self.openai_organization = openai_organization
+
+        api_key = get_api_key(api_key, "OPENAI_API_KEY")
+        init_kwargs.update({"api_key": api_key})
+
+        self.client = OpenAI(**init_kwargs)
+        self.async_client = AsyncOpenAI(**init_kwargs)
+
         self.model = model
-        self.kwargs = (
-            kwargs  # kwargs passed into the openai.ChatCompletion.create() method
-        )
+        self.system_message = system_message or "You are a helpful assistant."
 
-        self.client = OpenAIClient(
-            api_key=self.openai_api_key, organization=self.openai_organization
-        )
-
-    def load_model(self, model_path: os.PathLike) -> bool:
-        """
-        Loads a local model from a path.
-        """
-        return True  # since we're using the API
-
-    def chat(
-        self,
-        prompt: str,
-        raw_response: bool = False,
-        image: Image | None = None,
-        **kwargs: Dict,
-    ) -> str:
-        # TODO: move this elsewhere
-        # be consistent with the prefix
-        prefix = "user"
-        for message in self.memory.messages:
-            if isinstance(message, UserMessage):
-                prefix = message.prefix
-                break
-
-        self.memory.add_user_message(message=prompt, prefix=prefix, image=image)
-
-        completion_kwargs = self.kwargs.copy()
-        completion_kwargs.update(kwargs)
-
-        api_response = self.client.chat.completions.create(
+    def invoke(self, prompt: str) -> str:
+        response = self.client.chat.completions.create(
             model=self.model,
-            messages=self.memory.format_messages(),
-            **completion_kwargs,
-        )  # type: ignore
+            messages=[
+                {"role": "system", "content": self.system_message},
+                {"role": "user", "content": prompt},
+            ],
+            stream=False,
+        )
+        return response.choices[0].message.content or ""
 
-        chat_response: str = api_response.model_dump()["choices"][0]["message"][
-            "content"
-        ]
-        self.memory.add_assistant_message(chat_response)
-
-        if raw_response:
-            return api_response  # type: ignore
-
-        return chat_response
-
-    def stream_chat(
-        self, prompt: str, raw_response: bool = False, **kwargs: Dict
-    ) -> Generator[Dict[str, Any], None, None]:
-        self.memory.add_user_message(prompt)
-
-        completion_kwargs = self.kwargs.copy()
-        completion_kwargs.update(kwargs)
-
-        api_response = self.client.chat.completions.create(
+    async def ainvoke(self, prompt: str) -> str:
+        response: ChatCompletion = await self.async_client.chat.completions.create(
             model=self.model,
-            messages=self.memory.format_messages(),
+            messages=[
+                {"role": "system", "content": self.system_message},
+                {"role": "user", "content": prompt},
+            ],
+            stream=False,
+        )
+        return response.choices[0].message.content or ""
+
+    def stream_invoke(self, prompt: str) -> Iterator[str]:
+        response = self.client.chat.completions.create(
+            model=self.model,
+            messages=[
+                {"role": "system", "content": self.system_message},
+                {"role": "user", "content": prompt},
+            ],
             stream=True,
-            **completion_kwargs,
-        )  # type: ignore
+        )
 
-        aggregated_content = ""
-        for chunk in api_response:
+        message = ""
+        for chunk in response:
             content = chunk.choices[0].delta.content or ""
+            message += content
+            yield content
 
-            # if there's no content
-            if not content:
-                continue
-
-            aggregated_content += content
-
-            yield chunk if raw_response else content
-
-        self.memory.add_assistant_message(aggregated_content)
+    async def astream_invoke(self, prompt: str) -> AsyncIterable[str]:
+        response = await self.async_client.chat.completions.create(
+            model=self.model,
+            messages=[
+                {"role": "system", "content": self.system_message},
+                {"role": "user", "content": prompt},
+            ],
+            stream=True,
+        )
+        message = ""
+        async for chunk in response:
+            content = chunk.choices[0].delta.content or ""
+            message += content
+            yield content
