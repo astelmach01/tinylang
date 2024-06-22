@@ -1,30 +1,32 @@
-# 🌟 Welcome to Tinylang Documentation 🌟
+# Welcome to Tinylang
 
-Your comprehensive guide to mastering Tinylang.
+Tinylang is a Python library that provides a unified interface for interacting with various Large Language Models (LLMs) including OpenAI's GPT, Anthropic's Claude, and Google's Gemini.
 
-## 📖 Introduction to Tinylang
+## Features
 
-Tinylang is designed to offer a more intuitive and customizable approach to working with Langchain. Traditional tools can be cumbersome and inflexible, making tasks that should be simple, challenging. Tinylang addresses these issues by providing a streamlined and hackable interface, allowing you to tailor your interactions with Langchain to best suit your needs.
+- Unified API for multiple LLM providers
+- Support for OpenAI, Anthropic Claude, and Google Gemini
+- Synchronous and asynchronous invocation methods
+- Streaming support for real-time responses
+- Chat history management
+- Easy integration with existing projects
 
-## 🤔 Why Use Tinylang?
+## Quick Start
 
-- **🎯 Simplicity**: Built with user experience at the forefront, ensuring a smooth and efficient workflow.
-- **🛠️ Customizable**: Offers the power to customize your interactions, giving you the flexibility to work the way you want.
-- **🧠 Conversation Memory**: Features like Conversation Memory retain relevant conversational context.
-- **🤖 Easy Integration with OpenAI**: Built-in support for OpenAI LLMs, simplifying the process of connecting to the OpenAI API.
-- **🚀 Active Development**: Continuously evolving with exciting features like "Agents" coming soon.
+Install Tinylang:
 
-## 📚 Quick Links
+```bash
+pip install tinylang
+```
 
-- [🚀 Getting Started](getting_started.md)
-- [🧠 Conversation Memory](conversation_memory.md)
-- [🔧 Working with Functions](functions.md)
-- [🖼️ Working with Images](images.md)
-- [⛓️ Working with Chains](chains.md)
+Basic usage:
 
+```python
+from tinylang.llms import ChatOpenAI
 
-## What's Next?
+chat = ChatOpenAI("gpt-3.5-turbo")
+response = chat.invoke("Hello, how are you?")
+print(response)
+```
 
-Explore the sidebar to dive into detailed guides, API references, and more.
-
-©2023, Andrew Stelmach. Powered by MkDocs & Material for MkDocs.
+For more detailed information, check out our [Getting Started](getting_started.md) guide.

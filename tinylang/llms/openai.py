@@ -79,3 +79,6 @@ class ChatOpenAI(ChatBase):
             full_content += content
             yield content
         self.chat_history.add_message("assistant", full_content)
+
+    def get_history(self) -> List[Dict[str, str]]:
+        return self.chat_history.get_messages()

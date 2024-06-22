@@ -1,4 +1,4 @@
-from typing import Iterator, Dict, AsyncIterable
+from typing import Iterator, Dict, AsyncIterable, List
 from abc import ABC, abstractmethod
 
 
@@ -26,4 +26,8 @@ class ChatBase(ABC):
 
     @abstractmethod
     async def astream_invoke(self, user_input: str) -> AsyncIterable[str]:
+        raise NotImplementedError
+
+    @abstractmethod
+    def get_history(self) -> List[Dict[str, str]]:
         raise NotImplementedError
