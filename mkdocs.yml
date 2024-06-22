@@ -1,39 +1,32 @@
-site_name: tinylang
+site_name: Tinylang
 site_url: https://astelmach01.github.io/tinylang/
-
 nav:
   - 'Introduction': 'index.md'
-  - 'Getting Started + Quick Start': 'getting_started.md'
-  - 'Working with Chains': 'chains.md'
-  - 'Working with Functions': 'functions.md'
-  - 'Working with Images': 'images.md'
-  - 'Conversation Memory': 'conversation_memory.md'
-
+  - 'Getting Started': 'getting_started.md'
+  - 'Chat Interfaces':
+    - 'OpenAI': 'chat_openai.md'
+    - 'Claude': 'chat_claude.md'
+    - 'Gemini': 'chat_gemini.md'
+  - 'Chat History': 'chat_history.md'
+  - 'API Reference': 'api_reference.md'
 theme:
   name: material
   language: en
-
-
   font:
     text: Roboto
     code: Roboto Mono
-
   features:
     - search.suggest
     - search.highlight
     - search.share
-
     - navigation.instant
     - navigation.instant.prefetch
     - navigation.instant.progress
     - navigation.tracking
-
     - announce.dismiss
-
     - content.tabs.link
     - content.code.annotate
     - content.code.copy
-
   palette:
     - scheme: default
       toggle:
@@ -43,17 +36,10 @@ theme:
       toggle:
         icon: material/brightness-4
         name: Switch to light mode
-
-
-
 repo_name: tinylang/tinylang
 repo_url: https://github.com/astelmach01/tinylang
-
-
 plugins:
   - search
-
-
 markdown_extensions:
 - tables
 - toc:
@@ -66,7 +52,6 @@ markdown_extensions:
     pygments_lang_class: true
 - pymdownx.tabbed:
     alternate_style: true
-
 copyright: >
   Copyright &copy; 2024 Andrew Stelmach –
   <a href="#__consent">Change cookie settings</a>

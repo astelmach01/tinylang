@@ -78,3 +78,6 @@ class ChatGemini(ChatBase):
             full_response += content
             yield content
         self._update_chat_history("model", full_response)
+
+    def get_history(self) -> List[Dict[str, str]]:
+        return self.chat_history.get_messages()

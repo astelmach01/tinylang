@@ -81,3 +81,6 @@ class ChatClaude(ChatBase):
                 full_content += text
                 yield text
         self.chat_history.add_message("assistant", full_content)
+
+    def get_history(self) -> List[Dict[str, str]]:
+        return self.chat_history.get_messages()
