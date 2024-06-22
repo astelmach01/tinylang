@@ -3,7 +3,6 @@ from abc import ABC, abstractmethod
 
 
 class ChatBase(ABC):
-
     def __init__(
         self,
         model: str,

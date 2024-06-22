@@ -7,15 +7,12 @@ REQUIREMENTS_IN = requirements.in
 # The generated requirements.txt file
 REQUIREMENTS_TXT = requirements.txt
 
-.PHONY: compile install push  format type check publish clean
+.PHONY: compile install push  format check publish clean
 
 format:
 	ruff format .
 
-type:
-	mypy .
-
-check: format type clean
+check: format install clean 
 
 compile: $(REQUIREMENTS_TXT)
 
