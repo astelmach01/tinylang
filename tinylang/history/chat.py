@@ -1,4 +1,3 @@
-from collections import deque
 from typing import List, Dict, Optional
 
 
@@ -11,10 +10,7 @@ class ChatHistory:
     ):
         self.max_history = max_history
         self.system_message = system_message
-        self.messages: deque = deque(
-            maxlen=max_history * 2
-        )  # *2 to account for both user and assistant messages
-
+        self.messages: List[Dict[str, str]] = []
         if previous_history:
             for message in previous_history:
                 if message["role"] != "system":
@@ -22,11 +18,12 @@ class ChatHistory:
 
     def add_message(self, role: str, content: str) -> None:
         self.messages.append({"role": role, "content": content})
+        if self.max_history > 0:
+            # Keep only the last max_history * 2 messages
+            self.messages = self.messages[-(self.max_history * 2) :]
 
     def get_messages(self) -> List[Dict[str, str]]:
-        return [{"role": "system", "content": self.system_message}] + list(
-            self.messages
-        )
+        return [{"role": "system", "content": self.system_message}] + self.messages
 
     def clear(self) -> None:
         self.messages.clear()
