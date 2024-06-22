@@ -1,56 +1,93 @@
 # 🦜🔗🔍 Tinylang
 
-## This is deprecated, use [OpenAI Assistants](https://platform.openai.com/docs/assistants/overview) instead.
+Tinylang is a Python library that provides a unified interface for interacting with various Large Language Models (LLMs) including OpenAI's GPT, Anthropic's Claude, and Google's Gemini.
 
 [Documentation](https://astelmach01.github.io/tinylang/)
 
-Make working with LLMs insanely simpler and easier than ever before.
+## Features
 
-## What is tinylang?
-A hackable and simpler Langchain.
-
-Langchain can be very cumbersome and annoying to work with. It's too big, complicated, and shoves pre-made prompts down your throat.
-
-With tinylang, everything is intuitive and customizable, following most of the Langchain API.
-
+- Unified API for multiple LLM providers
+- Support for OpenAI, Anthropic Claude, and Google Gemini
+- Synchronous and asynchronous invocation methods
+- Streaming support for real-time responses
+- Chat history management
+- Easy integration with existing projects
 
 ## Installation
 
-```shell
+To install Tinylang, use pip:
+
+```bash
 pip install tinylang
 ```
 
 ## Usage
 
+Here's a quick example of how to use Tinylang:
 
 ```python
-from tinylang.chains import Chain
-from tinylang.llms import OpenAI
-from tinylang.memory import ConversationMemory
+from tinylang.llms import ChatOpenAI, ChatClaude, ChatGemini
 
-model = "gpt-3.5-turbo"
+# Initialize chat interfaces
+openai_chat = ChatOpenAI("gpt-4o", chat_history=2)
+claude_chat = ChatClaude("claude-3-opus-20240229", chat_history=2)
+gemini_chat = ChatGemini("gemini-1.5-pro", chat_history=2)
 
-chatGPT = OpenAI(
-    openai_api_key=openai_api_key,
-    openai_organization=openai_organization,
-    model=model,
-)
+# Use the chat interfaces
+response = openai_chat.invoke("Hello, how are you?")
+print(response)
 
-memory = ConversationMemory()
+# Streaming example
+for chunk in claude_chat.stream_invoke("Tell me a joke"):
+    print(chunk, end='')
 
-chain = Chain(
-    llm=chatGPT,
-    memory=memory,
-)
+# Async example
+async def async_chat():
+    response = await gemini_chat.ainvoke("What's the weather like today?")
+    print(response)
 
-prompt = "Hello"
-print(chain.run(prompt))
+# Run the async function
+import asyncio
+asyncio.run(async_chat())
 ```
 
+## API Reference
 
-## Features
+### ChatOpenAI, ChatClaude, ChatGemini
 
-- 🧠 Conversation Memory. Keep all or some aspects of your conversation
-- 🛸 OpenAI LLMs. It couldn't be easier to call the OpenAI API.
-- 💻 Prompts. Simple and hackable.
-- 🤖 Agents. Coming soon!
+These classes provide interfaces to their respective LLM providers. They share the following methods:
+
+- `invoke(prompt: str) -> str`: Synchronous invocation
+- `ainvoke(prompt: str) -> str`: Asynchronous invocation
+- `stream_invoke(prompt: str) -> Iterator[str]`: Synchronous streaming invocation
+- `astream_invoke(prompt: str) -> AsyncIterable[str]`: Asynchronous streaming invocation
+
+### ChatHistory
+
+Manages the conversation history for the chat interfaces.
+
+## Configuration
+
+Set the following environment variables for API authentication:
+
+- `OPENAI_API_KEY` for OpenAI
+- `ANTHROPIC_API_KEY` for Claude
+- `GOOGLE_API_KEY` for Gemini
+
+Alternatively, you can pass the API keys directly when initializing the chat interfaces.
+
+## Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+## License
+
+This project is licensed under the MIT License.
+
+## More Information
+
+For more detailed information about using Tinylang, please refer to our [documentation](https://astelmach01.github.io/tinylang/).
+
+## To be Added
+
+- function calling

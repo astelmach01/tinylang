@@ -1,55 +1,29 @@
-import os
+from typing import Iterator, Dict, AsyncIterable
 from abc import ABC, abstractmethod
-from typing import Any, Dict, Generator
-
-from tinylang.images import Image
-from tinylang.memory import ConversationMemory
-from tinylang.memory.base import BaseMemory
 
 
-class BaseLLM(ABC):
-    """
-    Abstract Base Class for Large Language Models.
-    """
-
-    def __init__(self, memory: BaseMemory | None = None) -> None:
-        self.memory = memory or ConversationMemory()
-
-    @abstractmethod
-    def load_model(self, model_path: os.PathLike) -> bool:
-        """
-        Loads the model from the specified path into memory.
-
-        :param model_path: Path to the model.
-        """
-        raise NotImplementedError
-
-    @abstractmethod
-    def chat(
+class ChatBase(ABC):
+    def __init__(
         self,
-        prompt: str,
-        raw_response: bool = False,
-        image: Image | None = None,
-        **kwargs: Dict,
-    ) -> str:
-        """
-        Simulates a chat interaction with the model.
-
-        :param prompt: The user prompt.
-        :param raw_response: Whether to return the raw response or not.
-        :return: Generated output text.
-        """
+        model: str,
+        api_key: str | None = None,
+        system_message: str | None = None,
+        init_kwargs: Dict = {},
+    ) -> None:
         raise NotImplementedError
 
     @abstractmethod
-    def stream_chat(
-        self, prompt: str, raw_response: bool = False
-    ) -> Generator[Dict[str, Any], None, None]:
-        """
-        Streams a chat interaction with the model.
+    def invoke(self, user_input: str) -> str:
+        raise NotImplementedError
 
-        :param prompt: The user prompt.
-        :param raw_response: The raw json response.
-        :return: Generated output text.
-        """
+    @abstractmethod
+    async def ainvoke(self, user_input: str) -> str:
+        raise NotImplementedError
+
+    @abstractmethod
+    def stream_invoke(self, user_input: str) -> Iterator[str]:
+        raise NotImplementedError
+
+    @abstractmethod
+    async def astream_invoke(self, user_input: str) -> AsyncIterable[str]:
         raise NotImplementedError

@@ -1,4 +1,4 @@
-from setuptools import find_packages, setup
+from setuptools import find_packages, setup  # type: ignore
 
 with open("README.md", "r", encoding="utf-8") as f:
     long_description = f.read()
@@ -6,7 +6,7 @@ with open("README.md", "r", encoding="utf-8") as f:
 with open("requirements.txt") as f:
     requirements = f.read().splitlines()
 
-version = "2.0.1"
+version = "3.0.0"
 
 setup(
     name="tinylang",
