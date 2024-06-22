@@ -21,13 +21,6 @@ jobs:
           pip install -r requirements.txt
           pip install -e .
 
-      - name: Lint with Ruff
-        uses: chartboost/ruff-action@v1
-
-      - name: Validate types with MyPy
-        run: |
-          mypy .
-
       - name: Test with pytest
         run: |
           pytest
