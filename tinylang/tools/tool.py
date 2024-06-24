@@ -38,7 +38,19 @@ class Tool:
 
 
 def process_tools(tools: List[Tool]) -> List[Dict[str, Any]]:
-    return [tool.to_dict() for tool in tools]
+    return [
+        {
+            "type": "function",
+            "function": {
+                "name": tool.name,
+                "description": tool.description,
+                "parameters": (
+                    tool.input_model.model_json_schema() if tool.input_model else {}
+                ),
+            },
+        }
+        for tool in tools
+    ]
 
 
 def get_default_tools() -> List[Tool]:
@@ -46,7 +58,7 @@ def get_default_tools() -> List[Tool]:
         expression: str
 
     def evaluate_expression(expression: str) -> float | str:
-        """Evaluate a mathematical expression."""
+        """Evaluate a mathematical expression using python's eval function."""
         try:
             return float(eval(expression))
         except Exception as e:
@@ -55,7 +67,7 @@ def get_default_tools() -> List[Tool]:
     return [
         Tool(
             name="evaluate_expression",
-            description="Evaluate a mathematical expression and return the result as a float.",
+            description="Evaluate a mathematical expression using python's eval() function and return the result as a float.",
             function=evaluate_expression,
             input_model=EvaluateExpressionInput,
         )

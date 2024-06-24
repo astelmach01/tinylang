@@ -29,15 +29,14 @@ class ChatOpenAI(ChatBase):
         self.chat_history = ChatHistory(
             chat_history, self.system_message, previous_history
         )
-        self.tools = (
-            process_tools(tools) if tools else process_tools(get_default_tools())
-        )
+        self.original_tools = tools if tools else get_default_tools()
+        self.tools = process_tools(self.original_tools)
         self.tool_choice = tool_choice
 
     def get_tool_function(self, function_name: str):
-        for tool in self.tools:
-            if tool["function"]["name"] == function_name:
-                return tool["function"]["function"]
+        for tool in self.original_tools:
+            if tool.name == function_name:
+                return tool.function
         raise ValueError(f"Function {function_name} not found in tools")
 
     def invoke(self, user_input: str) -> str:
