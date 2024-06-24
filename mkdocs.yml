@@ -8,6 +8,7 @@ nav:
     - 'Claude': 'chat_claude.md'
     - 'Gemini': 'chat_gemini.md'
   - 'Chat History': 'chat_history.md'
+  - 'Tool Usage': 'tool_usage.md'
   - 'API Reference': 'api_reference.md'
 theme:
   name: material

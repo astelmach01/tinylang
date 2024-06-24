@@ -1,27 +1,59 @@
-from tinylang.llms import ChatGemini
+from tinylang.llms import ChatOpenAI
+from tinylang.tools import Tool
+from pydantic import BaseModel
+import asyncio
 
-previous_history = [
-    {"role": "user", "content": "Hello, I am Andrew"},
-    {"role": "assistant", "content": "Hello Andrew! How can I assist you today?"},
-]
 
-openai_chat = ChatGemini(
-    "gemini-1.5-flash",
-    chat_history=2,
-    previous_history=previous_history,
-    system_message="You are a helpful assistant.",
+class EvaluateExpressionInput(BaseModel):
+    expression: str
+
+
+def evaluate_expression(expression: str) -> float | str:
+    """Evaluate a mathematical expression using python's eval function."""
+    try:
+        return float(eval(expression))
+    except Exception as e:
+        return str(e)
+
+
+chat = ChatOpenAI(
+    "gpt-4o",
+    tools=[
+        Tool(
+            name="evaluate_expression",
+            description="Evaluate a mathematical expression using python's eval() function and return the result as a float.",
+            function=evaluate_expression,
+            input_model=EvaluateExpressionInput,
+        )
+    ],
 )
 
-# First turn (which is actually the second turn considering the previous history)
-response1 = openai_chat.invoke("Who am I?")
-print(response1)
+print(chat.invoke("What is 2 to the power of 5 times 2?"))
 
-# Second turn
-response2 = openai_chat.invoke("Tell me a joke")
-print(response2)
+chat.clear_history()
 
-response3 = openai_chat.invoke("What is the capital of France?")
-print(response3)
+for chunk in chat.stream_invoke("What is 2 to the power of 5 times 2?"):
+    print(chunk, flush=True, end="")
 
-for history in openai_chat.chat_history.get_messages():
-    print(history)
+
+print()
+print("Finished first test")
+print()
+
+chat.clear_history()
+
+
+async def main():
+    print(await chat.ainvoke("What is 2 to the power of 5 times 2?"))
+
+    chat.clear_history()
+
+    async for chunk in chat.astream_invoke(
+        "What is 2 to the power of 5 times (5 modulo 2) times 374?"
+    ):
+        print(chunk, flush=True, end="")
+
+    print()
+
+
+asyncio.run(main())

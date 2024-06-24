@@ -2,7 +2,7 @@ pydantic
 python-dotenv
 
 
-openai
+openai>=1.35.0
 anthropic
 google-generativeai
 
