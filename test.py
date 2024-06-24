@@ -23,7 +23,9 @@ async def main():
 
     chat.clear_history()
 
-    async for chunk in chat.astream_invoke("What is 2 to the power of 5 times (5 modulo 2)?"):
+    async for chunk in chat.astream_invoke(
+        "What is 2 to the power of 5 times (5 modulo 2)?"
+    ):
         print(chunk, flush=True, end="")
 
     print()

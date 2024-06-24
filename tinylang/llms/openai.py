@@ -5,7 +5,7 @@ from openai.types.chat import ChatCompletion
 from .base import ChatBase
 from .util import get_api_key
 from ..history import ChatHistory
-from ..tools import evaluate_expression
+from ..tools.tool import Tool, process_tools, get_default_tools
 
 
 class ChatOpenAI(ChatBase):
@@ -17,7 +17,7 @@ class ChatOpenAI(ChatBase):
         system_message: str | None = None,
         chat_history: int = 0,
         previous_history: Optional[List[Dict[str, str]]] = None,
-        tools: Optional[List[Dict[str, Any]]] = None,
+        tools: Optional[List[Tool]] = None,
         tool_choice: Optional[str] = "auto",
     ) -> None:
         api_key = get_api_key(api_key, "OPENAI_API_KEY")
@@ -29,33 +29,16 @@ class ChatOpenAI(ChatBase):
         self.chat_history = ChatHistory(
             chat_history, self.system_message, previous_history
         )
-        self.tools = tools or [
-            {
-                "type": "function",
-                "function": {
-                    "name": "evaluate_expression",
-                    "description": """Useful when needed for mathematical calculations.
-                            Evaluates a mathematical expression such as '(10 + 2) ** (5 // 2)' using python's eval() function and return the result as a float.
-
-                            Args:
-                                expression (str): The mathematical expression to evaluate. Can be as complex as needed.
-
-                            Returns:
-                                float or string: The result of the evaluated expression, or an error message if the expression is invalid.""",
-                    "parameters": {
-                        "type": "object",
-                        "properties": {
-                            "expression": {
-                                "type": "string",
-                                "description": "The mathematical expression to evaluate.",
-                            }
-                        },
-                        "required": ["expression"],
-                    },
-                },
-            }
-        ]
+        self.tools = (
+            process_tools(tools) if tools else process_tools(get_default_tools())
+        )
         self.tool_choice = tool_choice
+
+    def get_tool_function(self, function_name: str):
+        for tool in self.tools:
+            if tool["function"]["name"] == function_name:
+                return tool["function"]["function"]
+        raise ValueError(f"Function {function_name} not found in tools")
 
     def invoke(self, user_input: str) -> str:
         self.chat_history.add_message("user", user_input)
@@ -107,21 +90,19 @@ class ChatOpenAI(ChatBase):
     def _process_response(self, response: ChatCompletion) -> str:
         message = response.choices[0].message
         if message.tool_calls:
-            # add request message to chat history
             self.chat_history.messages.append(message)
 
-            # parallel tool calling
             for tool_call in message.tool_calls:
                 function_name = tool_call.function.name
                 function_args = json.loads(tool_call.function.arguments)
 
                 print(f"Calling function {function_name} with args {function_args}")
-                if function_name == "evaluate_expression":
-                    result = evaluate_expression(function_args["expression"])
-                else:
+                try:
+                    function_to_call = self.get_tool_function(function_name)
+                    result = function_to_call(**function_args)
+                except ValueError:
                     result = f"Function '{function_name}' is not implemented."
 
-                # Add the tool call result to the chat history
                 self.chat_history.messages.append(
                     {
                         "role": "tool",
@@ -190,19 +171,23 @@ class ChatOpenAI(ChatBase):
             )
 
             available_functions = {
-                "evaluate_expression": evaluate_expression
-            }  # TODO - fix
+                tool["function"]["name"]: self.get_tool_function(
+                    tool["function"]["name"]
+                )
+                for tool in self.tools
+            }
+
             for tool_call in tool_calls:
                 function_name = tool_call["function"]["name"]
-                if function_name not in available_functions:
-                    yield f"Function {function_name} does not exist"
-                    return
-
-                function_to_call = available_functions[function_name]
-                function_args = json.loads(tool_call["function"]["arguments"])
-
-                print(f"Calling function {function_name} with args {function_args}")
-                function_response = function_to_call(**function_args)
+                try:
+                    function_to_call = self.get_tool_function(function_name)
+                    function_args = json.loads(tool_call["function"]["arguments"])
+                    print(f"Calling function {function_name} with args {function_args}")
+                    function_response = function_to_call(**function_args)
+                except ValueError:
+                    function_response = (
+                        f"Function '{function_name}' is not implemented."
+                    )
 
                 self.chat_history.messages.append(
                     {
@@ -280,17 +265,23 @@ class ChatOpenAI(ChatBase):
             )
 
             available_functions = {
-                "evaluate_expression": evaluate_expression
-            }  # Assuming this method exists
+                tool["function"]["name"]: self.get_tool_function(
+                    tool["function"]["name"]
+                )
+                for tool in self.tools
+            }
+
             for tool_call in tool_calls:
                 function_name = tool_call["function"]["name"]
-                if function_name not in available_functions:
-                    yield f"Function {function_name} does not exist"
-                    return
-
-                function_to_call = available_functions[function_name]
-                function_args = json.loads(tool_call["function"]["arguments"])
-                function_response = function_to_call(**function_args)
+                try:
+                    function_to_call = self.get_tool_function(function_name)
+                    function_args = json.loads(tool_call["function"]["arguments"])
+                    print(f"Calling function {function_name} with args {function_args}")
+                    function_response = function_to_call(**function_args)
+                except ValueError:
+                    function_response = (
+                        f"Function '{function_name}' is not implemented."
+                    )
 
                 self.chat_history.messages.append(
                     {
