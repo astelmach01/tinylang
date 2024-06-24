@@ -18,6 +18,8 @@ class ChatHistory:
 
     def add_message(self, role: str, content: str) -> None:
         self.messages.append({"role": role, "content": content})
+
+        # TODO - change this to user-assistant roles and not the entire list
         if self.max_history > 0:
             # Keep only the last max_history * 2 messages
             self.messages = self.messages[-(self.max_history * 2) :]

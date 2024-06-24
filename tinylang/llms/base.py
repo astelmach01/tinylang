@@ -36,3 +36,7 @@ class ChatBase(ABC):
     @abstractmethod
     def get_history(self) -> List[Dict[str, str]]:
         raise NotImplementedError
+
+    @abstractmethod
+    def clear_history(self) -> None:
+        raise NotImplementedError
