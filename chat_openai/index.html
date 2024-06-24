@@ -437,6 +437,13 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#using-tools-function-calling" class="md-nav__link">
+    Using Tools (Function Calling)
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -504,6 +511,25 @@
   
   <span class="md-ellipsis">
     Chat History
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tool_usage/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Tool Usage
   </span>
   
 
@@ -614,6 +640,13 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#using-tools-function-calling" class="md-nav__link">
+    Using Tools (Function Calling)
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -633,52 +666,112 @@
 
 
 <h1 id="chatopenai">ChatOpenAI<a class="headerlink" href="#chatopenai" title="Permanent link">&para;</a></h1>
-<p>The <code>ChatOpenAI</code> class provides an interface to interact with OpenAI's language models.</p>
+<p>The <code>ChatOpenAI</code> class provides an interface to interact with OpenAI's language models, including support for function calling (tools).</p>
 <h2 id="initialization">Initialization<a class="headerlink" href="#initialization" title="Permanent link">&para;</a></h2>
 <div class="language-python highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">tinylang.llms</span> <span class="kn">import</span> <span class="n">ChatOpenAI</span>
+<span class="kn">from</span> <span class="nn">tinylang.tools</span> <span class="kn">import</span> <span class="n">Tool</span>
+
+<span class="k">def</span> <span class="nf">multiply</span><span class="p">(</span><span class="n">a</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">b</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Multiply two numbers.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">a</span> <span class="o">*</span> <span class="n">b</span>
+
+<span class="n">tools</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="n">Tool</span><span class="p">(</span>
+        <span class="n">name</span><span class="o">=</span><span class="s2">&quot;multiply&quot;</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Multiply two integers&quot;</span><span class="p">,</span>
+        <span class="n">function</span><span class="o">=</span><span class="n">multiply</span>
+    <span class="p">)</span>
+<span class="p">]</span>
 
 <span class="n">chat</span> <span class="o">=</span> <span class="n">ChatOpenAI</span><span class="p">(</span>
     <span class="n">model</span><span class="o">=</span><span class="s2">&quot;gpt-3.5-turbo&quot;</span><span class="p">,</span>
     <span class="n">api_key</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>  <span class="c1"># Optional: Defaults to OPENAI_API_KEY environment variable</span>
     <span class="n">chat_history</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>  <span class="c1"># Optional: Number of messages to keep in history</span>
-    <span class="n">system_message</span><span class="o">=</span><span class="s2">&quot;You are a helpful assistant.&quot;</span>  <span class="c1"># Optional: System message for the conversation</span>
+    <span class="n">system_message</span><span class="o">=</span><span class="s2">&quot;You are a helpful assistant.&quot;</span><span class="p">,</span>  <span class="c1"># Optional: System message for the conversation</span>
+    <span class="n">tools</span><span class="o">=</span><span class="n">tools</span><span class="p">,</span>  <span class="c1"># Optional: List of Tool objects for function calling</span>
+    <span class="n">tool_choice</span><span class="o">=</span><span class="s2">&quot;auto&quot;</span>  <span class="c1"># Optional: How to choose which function to call</span>
 <span class="p">)</span>
 </code></pre></div>
 <h2 id="methods">Methods<a class="headerlink" href="#methods" title="Permanent link">&para;</a></h2>
 <h3 id="invoke">invoke<a class="headerlink" href="#invoke" title="Permanent link">&para;</a></h3>
 <p>Synchronous method to get a response from the model.</p>
-<div class="language-python highlight"><pre><span></span><code><span class="n">response</span> <span class="o">=</span> <span class="n">chat</span><span class="o">.</span><span class="n">invoke</span><span class="p">(</span><span class="s2">&quot;What is the capital of France?&quot;</span><span class="p">)</span>
+<div class="language-python highlight"><pre><span></span><code><span class="n">response</span> <span class="o">=</span> <span class="n">chat</span><span class="o">.</span><span class="n">invoke</span><span class="p">(</span><span class="s2">&quot;What is 5 times 3?&quot;</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">response</span><span class="p">)</span>
+</code></pre></div>
+<p>This might result in the model using the <code>multiply</code> function:</p>
+<div class="language-text highlight"><pre><span></span><code>To calculate 5 times 3, I&#39;ll use the multiply function.
+
+5 times 3 equals 15.
+
+Is there anything else you&#39;d like to know?
 </code></pre></div>
 <h3 id="ainvoke">ainvoke<a class="headerlink" href="#ainvoke" title="Permanent link">&para;</a></h3>
 <p>Asynchronous version of <code>invoke</code>.</p>
 <div class="language-python highlight"><pre><span></span><code><span class="kn">import</span> <span class="nn">asyncio</span>
 
 <span class="k">async</span> <span class="k">def</span> <span class="nf">get_response</span><span class="p">():</span>
-    <span class="n">response</span> <span class="o">=</span> <span class="k">await</span> <span class="n">chat</span><span class="o">.</span><span class="n">ainvoke</span><span class="p">(</span><span class="s2">&quot;What is the capital of France?&quot;</span><span class="p">)</span>
+    <span class="n">response</span> <span class="o">=</span> <span class="k">await</span> <span class="n">chat</span><span class="o">.</span><span class="n">ainvoke</span><span class="p">(</span><span class="s2">&quot;What is 7 times 6?&quot;</span><span class="p">)</span>
     <span class="nb">print</span><span class="p">(</span><span class="n">response</span><span class="p">)</span>
 
 <span class="n">asyncio</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">get_response</span><span class="p">())</span>
 </code></pre></div>
 <h3 id="stream_invoke">stream_invoke<a class="headerlink" href="#stream_invoke" title="Permanent link">&para;</a></h3>
 <p>Synchronous method that streams the response.</p>
-<div class="language-python highlight"><pre><span></span><code><span class="k">for</span> <span class="n">chunk</span> <span class="ow">in</span> <span class="n">chat</span><span class="o">.</span><span class="n">stream_invoke</span><span class="p">(</span><span class="s2">&quot;Tell me a story&quot;</span><span class="p">):</span>
+<div class="language-python highlight"><pre><span></span><code><span class="k">for</span> <span class="n">chunk</span> <span class="ow">in</span> <span class="n">chat</span><span class="o">.</span><span class="n">stream_invoke</span><span class="p">(</span><span class="s2">&quot;Calculate 12 times 8 and explain the process.&quot;</span><span class="p">):</span>
     <span class="nb">print</span><span class="p">(</span><span class="n">chunk</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">flush</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </code></pre></div>
 <h3 id="astream_invoke">astream_invoke<a class="headerlink" href="#astream_invoke" title="Permanent link">&para;</a></h3>
 <p>Asynchronous version of <code>stream_invoke</code>.</p>
 <div class="language-python highlight"><pre><span></span><code><span class="k">async</span> <span class="k">def</span> <span class="nf">stream_response</span><span class="p">():</span>
-    <span class="k">async</span> <span class="k">for</span> <span class="n">chunk</span> <span class="ow">in</span> <span class="n">chat</span><span class="o">.</span><span class="n">astream_invoke</span><span class="p">(</span><span class="s2">&quot;Tell me a story&quot;</span><span class="p">):</span>
+    <span class="k">async</span> <span class="k">for</span> <span class="n">chunk</span> <span class="ow">in</span> <span class="n">chat</span><span class="o">.</span><span class="n">astream_invoke</span><span class="p">(</span><span class="s2">&quot;What is 15 times 4? Show your work.&quot;</span><span class="p">):</span>
         <span class="nb">print</span><span class="p">(</span><span class="n">chunk</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">flush</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
 <span class="n">asyncio</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">stream_response</span><span class="p">())</span>
 </code></pre></div>
 <h2 id="chat-history">Chat History<a class="headerlink" href="#chat-history" title="Permanent link">&para;</a></h2>
 <p>The <code>ChatOpenAI</code> class automatically manages chat history. You can access the current history using:</p>
-<div class="language-python highlight"><pre><span></span><code><span class="n">history</span> <span class="o">=</span> <span class="n">chat</span><span class="o">.</span><span class="n">chat_history</span><span class="o">.</span><span class="n">get_messages</span><span class="p">()</span>
+<div class="language-python highlight"><pre><span></span><code><span class="n">history</span> <span class="o">=</span> <span class="n">chat</span><span class="o">.</span><span class="n">get_history</span><span class="p">()</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">history</span><span class="p">)</span>
 </code></pre></div>
 <p>For more details on chat history management, see the <a href="../chat_history/">Chat History</a> documentation.</p>
+<h2 id="using-tools-function-calling">Using Tools (Function Calling)<a class="headerlink" href="#using-tools-function-calling" title="Permanent link">&para;</a></h2>
+<p>The <code>ChatOpenAI</code> class supports the use of tools (functions) that the model can call when needed. Here's an example of defining and using a more complex tool:</p>
+<div class="language-python highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">tinylang.llms</span> <span class="kn">import</span> <span class="n">ChatOpenAI</span>
+<span class="kn">from</span> <span class="nn">tinylang.tools</span> <span class="kn">import</span> <span class="n">Tool</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span>
+
+<span class="k">def</span> <span class="nf">calculate_average</span><span class="p">(</span><span class="n">numbers</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Calculate the average of a list of numbers.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="nb">sum</span><span class="p">(</span><span class="n">numbers</span><span class="p">)</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">numbers</span><span class="p">)</span>
+
+<span class="n">tools</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="n">Tool</span><span class="p">(</span>
+        <span class="n">name</span><span class="o">=</span><span class="s2">&quot;calculate_average&quot;</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Calculate the average of a list of numbers&quot;</span><span class="p">,</span>
+        <span class="n">function</span><span class="o">=</span><span class="n">calculate_average</span>
+    <span class="p">)</span>
+<span class="p">]</span>
+
+<span class="n">chat</span> <span class="o">=</span> <span class="n">ChatOpenAI</span><span class="p">(</span><span class="s2">&quot;gpt-3.5-turbo&quot;</span><span class="p">,</span> <span class="n">tools</span><span class="o">=</span><span class="n">tools</span><span class="p">)</span>
+
+<span class="n">response</span> <span class="o">=</span> <span class="n">chat</span><span class="o">.</span><span class="n">invoke</span><span class="p">(</span><span class="s2">&quot;What&#39;s the average of 10, 15, and 20?&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">response</span><span class="p">)</span>
+</code></pre></div>
+<p>This might result in:</p>
+<div class="language-text highlight"><pre><span></span><code>To calculate the average of 10, 15, and 20, I&#39;ll use the calculate_average function.
+
+The average of 10, 15, and 20 is 15.
+
+Here&#39;s how it works:
+1. The function takes the list of numbers [10, 15, 20].
+2. It calculates the sum of these numbers: 10 + 15 + 20 = 45.
+3. Then it divides the sum by the count of numbers (3 in this case): 45 / 3 = 15.
+
+So, the average of 10, 15, and 20 is 15.
+
+Is there anything else you&#39;d like to know?
+</code></pre></div>
+<p>Remember that the availability and behavior of tools may depend on the specific OpenAI model you're using. Always refer to the latest OpenAI documentation for the most up-to-date information on function calling capabilities.</p>
 
 
 

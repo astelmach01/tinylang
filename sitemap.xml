@@ -2,37 +2,42 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
          <loc>https://astelmach01.github.io/tinylang/</loc>
-         <lastmod>2024-06-22</lastmod>
+         <lastmod>2024-06-24</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://astelmach01.github.io/tinylang/api_reference/</loc>
-         <lastmod>2024-06-22</lastmod>
+         <lastmod>2024-06-24</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://astelmach01.github.io/tinylang/chat_claude/</loc>
-         <lastmod>2024-06-22</lastmod>
+         <lastmod>2024-06-24</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://astelmach01.github.io/tinylang/chat_gemini/</loc>
-         <lastmod>2024-06-22</lastmod>
+         <lastmod>2024-06-24</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://astelmach01.github.io/tinylang/chat_history/</loc>
-         <lastmod>2024-06-22</lastmod>
+         <lastmod>2024-06-24</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://astelmach01.github.io/tinylang/chat_openai/</loc>
-         <lastmod>2024-06-22</lastmod>
+         <lastmod>2024-06-24</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://astelmach01.github.io/tinylang/getting_started/</loc>
-         <lastmod>2024-06-22</lastmod>
+         <lastmod>2024-06-24</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://astelmach01.github.io/tinylang/tool_usage/</loc>
+         <lastmod>2024-06-24</lastmod>
          <changefreq>daily</changefreq>
     </url>
 </urlset>
