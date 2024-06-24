@@ -1,11 +1,11 @@
-from typing import Dict, Iterator, AsyncIterable, List, Any, Optional, AsyncIterator
+from typing import Dict, List, Any, Optional, Iterator, AsyncIterable, AsyncIterator
 import json
 from openai import OpenAI, AsyncOpenAI
 from openai.types.chat import ChatCompletion
 from .base import ChatBase
 from .util import get_api_key
 from ..history import ChatHistory
-from ..tools.tool import Tool, process_tools, get_default_tools
+from ..tools.tool import Tool, process_tools
 
 
 class ChatOpenAI(ChatBase):
@@ -18,7 +18,7 @@ class ChatOpenAI(ChatBase):
         chat_history: int = 0,
         previous_history: Optional[List[Dict[str, str]]] = None,
         tools: Optional[List[Tool]] = None,
-        tool_choice: Optional[str] = "auto",
+        tool_choice: Optional[str] = None,
     ) -> None:
         api_key = get_api_key(api_key, "OPENAI_API_KEY")
         init_kwargs.update({"api_key": api_key})
@@ -29,11 +29,13 @@ class ChatOpenAI(ChatBase):
         self.chat_history = ChatHistory(
             chat_history, self.system_message, previous_history
         )
-        self.original_tools = tools if tools else get_default_tools()
-        self.tools = process_tools(self.original_tools)
-        self.tool_choice = tool_choice
+        self.original_tools = tools
+        self.processed_tools = process_tools(tools) if tools else None
+        self.tool_choice = tool_choice if tools else None
 
     def get_tool_function(self, function_name: str):
+        if not self.original_tools:
+            raise ValueError("No tools have been set for this chat instance")
         for tool in self.original_tools:
             if tool.name == function_name:
                 return tool.function
@@ -45,7 +47,7 @@ class ChatOpenAI(ChatBase):
         response = self.client.chat.completions.create(
             model=self.model,
             messages=messages,
-            tools=self.tools,
+            tools=self.processed_tools,
             tool_choice=self.tool_choice,
         )
         return self._process_response(response)
@@ -56,7 +58,7 @@ class ChatOpenAI(ChatBase):
         response = await self.async_client.chat.completions.create(
             model=self.model,
             messages=messages,
-            tools=self.tools,
+            tools=self.processed_tools,
             tool_choice=self.tool_choice,
         )
         return self._process_response(response)
@@ -67,7 +69,7 @@ class ChatOpenAI(ChatBase):
         response = self.client.chat.completions.create(
             model=self.model,
             messages=messages,
-            tools=self.tools,
+            tools=self.processed_tools,
             tool_choice=self.tool_choice,
             stream=True,
         )
@@ -79,7 +81,7 @@ class ChatOpenAI(ChatBase):
         response = await self.async_client.chat.completions.create(
             model=self.model,
             messages=messages,
-            tools=self.tools,
+            tools=self.processed_tools,
             tool_choice=self.tool_choice,
             stream=True,
         )
@@ -169,18 +171,11 @@ class ChatOpenAI(ChatBase):
                 {"role": "assistant", "content": None, "tool_calls": tool_calls}
             )
 
-            available_functions = {
-                tool["function"]["name"]: self.get_tool_function(
-                    tool["function"]["name"]
-                )
-                for tool in self.tools
-            }
-
             for tool_call in tool_calls:
                 function_name = tool_call["function"]["name"]
+                function_args = json.loads(tool_call["function"]["arguments"])
                 try:
                     function_to_call = self.get_tool_function(function_name)
-                    function_args = json.loads(tool_call["function"]["arguments"])
                     print(f"Calling function {function_name} with args {function_args}")
                     function_response = function_to_call(**function_args)
                 except ValueError:
@@ -263,18 +258,11 @@ class ChatOpenAI(ChatBase):
                 {"role": "assistant", "content": None, "tool_calls": tool_calls}
             )
 
-            available_functions = {
-                tool["function"]["name"]: self.get_tool_function(
-                    tool["function"]["name"]
-                )
-                for tool in self.tools
-            }
-
             for tool_call in tool_calls:
                 function_name = tool_call["function"]["name"]
+                function_args = json.loads(tool_call["function"]["arguments"])
                 try:
                     function_to_call = self.get_tool_function(function_name)
-                    function_args = json.loads(tool_call["function"]["arguments"])
                     print(f"Calling function {function_name} with args {function_args}")
                     function_response = function_to_call(**function_args)
                 except ValueError:

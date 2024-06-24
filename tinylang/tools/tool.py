@@ -51,24 +51,3 @@ def process_tools(tools: List[Tool]) -> List[Dict[str, Any]]:
         }
         for tool in tools
     ]
-
-
-def get_default_tools() -> List[Tool]:
-    class EvaluateExpressionInput(BaseModel):
-        expression: str
-
-    def evaluate_expression(expression: str) -> float | str:
-        """Evaluate a mathematical expression using python's eval function."""
-        try:
-            return float(eval(expression))
-        except Exception as e:
-            return str(e)
-
-    return [
-        Tool(
-            name="evaluate_expression",
-            description="Evaluate a mathematical expression using python's eval() function and return the result as a float.",
-            function=evaluate_expression,
-            input_model=EvaluateExpressionInput,
-        )
-    ]
