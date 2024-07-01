@@ -251,32 +251,32 @@ class ChatClaude(ChatBase):
     def _process_response(self, response) -> str:
         if response.stop_reason == "tool_use":
             self.chat_history.add_message("assistant", response.content)
-            for message in response.content:
-                if message.type == "tool_use":
-                    tool_id = message.id
-                    tool_name = message.name
-                    tool_arguments = message.input
-                    tool_function = self.get_tool_function(tool_name)
-                    print(f"Calling tool {tool_name} with args {tool_arguments}")
-                    try:
-                        tool_response = tool_function(**tool_arguments)
-                    except Exception as e:
-                        print(f"Error calling {tool_function}: {e}")
-                        tool_response = f"Error: {e}"
 
-                    self.chat_history.messages.append(
-                        {
-                            "role": "user",
-                            "content": [
-                                {
-                                    "type": "tool_result",
-                                    "tool_use_id": tool_id,
-                                    "content": str(tool_response),
-                                }
-                            ],
-                        }
-                    )
+            tool_response_content = []
+            tool_use = None
 
+            for res in response.content:
+                if res.type != "tool_use":
+                    continue
+                tool_use = res
+
+                tool_id = tool_use.id
+                tool_name = tool_use.name
+                tool_input = tool_use.input
+
+                function = self.get_tool_function(tool_name)
+                print(f"Calling function {tool_name} with args {tool_input}")
+                result = function(**tool_input)
+
+                tool_response = {
+                    "type": "tool_result",
+                    "tool_use_id": tool_id,
+                    "content": str(result),
+                }
+
+                tool_response_content.append(tool_response)
+
+            self.chat_history.add_message("user", tool_response_content)
             # make another api call to get the response after the tool has been used
             response = self.client.messages.create(
                 model=self.model,

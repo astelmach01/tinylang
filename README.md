@@ -92,4 +92,5 @@ For more detailed information about using Tinylang, please refer to our [documen
 
 - function calling for gemini
 - return usage after using a function
+- async tools
 - refactor
