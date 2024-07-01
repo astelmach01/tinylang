@@ -121,9 +121,7 @@ class ChatClaude(ChatBase):
             messages=messages,
             tools=self.processed_tools,
         )
-        content = response.content[0].text or ""
-        self.chat_history.add_message("assistant", content)
-        return content
+        return self._process_response(response)
 
     def stream_invoke(self, prompt: str) -> Iterator[str]:
         self.chat_history.add_message("user", prompt)
