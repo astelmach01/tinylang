@@ -90,4 +90,6 @@ For more detailed information about using Tinylang, please refer to our [documen
 
 ## To be Added
 
-- function calling
+- function calling for gemini
+- return usage after using a function
+- refactor
