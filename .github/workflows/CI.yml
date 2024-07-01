@@ -1,4 +1,4 @@
-name: Cosmo Backend
+name: tinylang
 
 on: pull_request
 
