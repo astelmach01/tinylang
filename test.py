@@ -5,7 +5,8 @@ import time
 import asyncio
 
 prompt = "What is the weather in San Francisco in fahrenheit and send an email from doof@aol.com to ukiand@google.com with the subject hello and body hello"
-model = "gpt-4o"
+# model = "gpt-4o"
+model = "claude-3-5-sonnet-20240620"
 
 
 def get_weather(location: str, unit: str):
@@ -16,7 +17,7 @@ def send_email(to: str, subject: str, body: str):
     return f"Email sent to {to} with subject {subject} and body {body}"
 
 
-chat = ChatOpenAI(
+chat = ChatClaude(
     model,
     tools=[
         Tool(

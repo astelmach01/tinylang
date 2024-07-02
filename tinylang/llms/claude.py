@@ -1,4 +1,4 @@
-from typing import Dict, Iterator, AsyncIterable, List, Optional, Any
+from typing import Dict, Iterator, AsyncIterable, List, Optional, Any, AsyncIterator
 import re
 from .base import ChatBase
 import anthropic
@@ -99,8 +99,9 @@ class ChatClaude(ChatBase):
 
         raise ValueError(f"Tool {function_name} not found.")
 
-    def invoke(self, prompt: str, max_tokens: int = 2048) -> str:
-        self.chat_history.add_message("user", prompt)
+    def invoke(self, prompt: Optional[str] = None, max_tokens: int = 2048) -> str:
+        if prompt is not None:
+            self.chat_history.add_message("user", prompt)
         messages = self.chat_history.get_messages()[1:]  # Exclude system message
         response = self.client.messages.create(
             model=self.model,
@@ -111,8 +112,9 @@ class ChatClaude(ChatBase):
         )
         return self._process_response(response)
 
-    async def ainvoke(self, prompt: str) -> str:
-        self.chat_history.add_message("user", prompt)
+    async def ainvoke(self, prompt: Optional[str] = None) -> str:
+        if prompt is not None:
+            self.chat_history.add_message("user", prompt)
         messages = self.chat_history.get_messages()[1:]  # Exclude system message
         response = await self.async_client.messages.create(
             model=self.model,
@@ -123,69 +125,22 @@ class ChatClaude(ChatBase):
         )
         return await self._process_async_response(response)
 
-    def stream_invoke(self, prompt: str) -> Iterator[str]:
-        self.chat_history.add_message("user", prompt)
+    def stream_invoke(self, prompt: Optional[str] = None) -> Iterator[str]:
+        if prompt is not None:
+            self.chat_history.add_message("user", prompt)
         messages = self.chat_history.get_messages()[1:]  # Exclude system message
         with self.client.messages.stream(
             model=self.model,
             system=self.system_message,
             max_tokens=2048,
             messages=messages,
+            tools=self.processed_tools,
         ) as stream:
-            for event in stream:
-                if event.type == "text":
-                    yield event.text
+            yield from self._stream_process_response(stream)
 
-            final_message = stream.get_final_message()
-            self.chat_history.add_message("assistant", final_message.content)
-
-            tool_calls = [
-                block
-                for block in final_message.content
-                if isinstance(block, ToolUseBlock)
-            ]
-
-            tool_response_content = []
-
-            for tool_call in tool_calls:
-                function_name = tool_call.name
-                function_args = tool_call.input
-                try:
-                    function_to_call = self.get_tool_function(function_name)
-                    print(f"Calling function {function_name} with args {function_args}")
-                    function_response = function_to_call(**function_args)
-
-                    tool_result = {
-                        "type": "tool_result",
-                        "tool_use_id": tool_call.id,
-                        "content": str(function_response),
-                    }
-
-                    tool_response_content.append(tool_result)
-                except Exception as e:
-                    print(f"Error calling function {function_name}: {str(e)}")
-
-            # Append tool responses to messages as a user message
-            if tool_response_content:
-                self.chat_history.add_message("user", tool_response_content)
-
-            if tool_calls:
-                with self.client.messages.stream(
-                    max_tokens=2048,
-                    model=self.model,
-                    system=self.system_message,
-                    messages=self.chat_history.get_messages()[1:],
-                    tools=self.processed_tools,
-                ) as follow_up_stream:
-                    for event in follow_up_stream:
-                        if event.type == "text":
-                            yield event.text
-
-                    final_message = follow_up_stream.get_final_message()
-                    self.chat_history.add_message("assistant", final_message.content)
-
-    async def astream_invoke(self, prompt: str) -> AsyncIterable[str]:
-        self.chat_history.add_message("user", prompt)
+    async def astream_invoke(self, prompt: Optional[str] = None) -> AsyncIterable[str]:
+        if prompt is not None:
+            self.chat_history.add_message("user", prompt)
         messages = self.chat_history.get_messages()[1:]  # Exclude system message
         async with self.async_client.messages.stream(
             model=self.model,
@@ -194,19 +149,94 @@ class ChatClaude(ChatBase):
             messages=messages,
             tools=self.processed_tools,
         ) as stream:
-            async for event in stream:
-                if event.type == "text":
-                    yield event.text
+            async for chunk in self._astream_process_response(stream):
+                yield chunk
 
-            final_message = await stream.get_final_message()
-            self.chat_history.add_message("assistant", final_message.content)
+    def _process_response(self, response) -> str:
+        if response.stop_reason == "tool_use":
+            self.chat_history.add_message("assistant", str(response.content))
 
-            tool_calls = [
-                block
-                for block in final_message.content
-                if isinstance(block, ToolUseBlock)
-            ]
+            tool_response_content = []
 
+            for res in response.content:
+                if res.type != "tool_use":
+                    continue
+
+                tool_id = res.id
+                tool_name = res.name
+                tool_input = res.input
+
+                function = self.get_tool_function(tool_name)
+                print(f"Calling function {tool_name} with args {tool_input}")
+                result = function(**tool_input)
+
+                tool_response = {
+                    "type": "tool_result",
+                    "tool_use_id": tool_id,
+                    "content": str(result),
+                }
+
+                tool_response_content.append(tool_response)
+
+            self.chat_history.add_message("user", str(tool_response_content))
+
+            # Recursively call invoke() without passing any user input
+            return self.invoke()
+        else:
+            content = response.content[0].text or ""
+            self.chat_history.add_message("assistant", content)
+            return content
+
+    async def _process_async_response(self, response) -> str:
+        if response.stop_reason == "tool_use":
+            self.chat_history.add_message("assistant", str(response.content))
+
+            tool_response_content = []
+
+            for res in response.content:
+                if res.type != "tool_use":
+                    continue
+
+                tool_id = res.id
+                tool_name = res.name
+                tool_input = res.input
+
+                function = self.get_tool_function(tool_name)
+                print(f"Calling function {tool_name} with args {tool_input}")
+                result = function(**tool_input)  # Removed await
+
+                tool_response = {
+                    "type": "tool_result",
+                    "tool_use_id": tool_id,
+                    "content": str(result),
+                }
+
+                tool_response_content.append(tool_response)
+
+            self.chat_history.add_message("user", str(tool_response_content))
+
+            # Recursively call ainvoke() without passing any user input
+            return await self.ainvoke()
+        else:
+            content = response.content[0].text or ""
+            self.chat_history.add_message("assistant", content)
+            return content
+
+    def _stream_process_response(self, stream) -> Iterator[str]:
+        full_content = ""
+        for event in stream:
+            if event.type == "text":
+                full_content += event.text
+                yield event.text
+
+        final_message = stream.get_final_message()
+        self.chat_history.add_message("assistant", full_content)
+
+        tool_calls = [
+            block for block in final_message.content if isinstance(block, ToolUseBlock)
+        ]
+
+        if tool_calls:
             tool_response_content = []
 
             for tool_call in tool_calls:
@@ -227,115 +257,53 @@ class ChatClaude(ChatBase):
                 except Exception as e:
                     print(f"Error calling function {function_name}: {str(e)}")
 
-            # Append tool responses to messages as a user message
-            if tool_response_content:
-                self.chat_history.add_message("user", tool_response_content)
+            self.chat_history.add_message("user", str(tool_response_content))
 
-            if tool_calls:
-                async with self.async_client.messages.stream(
-                    max_tokens=2048,
-                    model=self.model,
-                    system=self.system_message,
-                    messages=self.chat_history.get_messages()[1:],
-                    tools=self.processed_tools,
-                ) as follow_up_stream:
-                    async for event in follow_up_stream:
-                        if event.type == "text":
-                            yield event.text
+            # Recursively call stream_invoke() without passing any user input
+            yield from self.stream_invoke()
 
-                    final_message = await follow_up_stream.get_final_message()
-                    self.chat_history.add_message("assistant", final_message.content)
+    async def _astream_process_response(self, stream) -> AsyncIterator[str]:
+        full_content = ""
+        async for event in stream:
+            if event.type == "text":
+                full_content += event.text
+                yield event.text
 
-    def _process_response(self, response) -> str:
-        if response.stop_reason == "tool_use":
-            self.chat_history.add_message("assistant", response.content)
+        final_message = await stream.get_final_message()
+        self.chat_history.add_message("assistant", full_content)
 
+        tool_calls = [
+            block for block in final_message.content if isinstance(block, ToolUseBlock)
+        ]
+
+        if tool_calls:
             tool_response_content = []
-            tool_use = None
 
-            for res in response.content:
-                if res.type != "tool_use":
-                    continue
-                tool_use = res
+            for tool_call in tool_calls:
+                function_name = tool_call.name
+                function_args = tool_call.input
+                try:
+                    function_to_call = self.get_tool_function(function_name)
+                    print(f"Calling function {function_name} with args {function_args}")
+                    function_response = function_to_call(
+                        **function_args
+                    )  # Removed await
 
-                tool_id = tool_use.id
-                tool_name = tool_use.name
-                tool_input = tool_use.input
+                    tool_result = {
+                        "type": "tool_result",
+                        "tool_use_id": tool_call.id,
+                        "content": str(function_response),
+                    }
 
-                function = self.get_tool_function(tool_name)
-                print(f"Calling function {tool_name} with args {tool_input}")
-                result = function(**tool_input)
+                    tool_response_content.append(tool_result)
+                except Exception as e:
+                    print(f"Error calling function {function_name}: {str(e)}")
 
-                tool_response = {
-                    "type": "tool_result",
-                    "tool_use_id": tool_id,
-                    "content": str(result),
-                }
+            self.chat_history.add_message("user", str(tool_response_content))
 
-                tool_response_content.append(tool_response)
-
-            self.chat_history.add_message("user", tool_response_content)
-            # make another api call to get the response after the tool has been used
-            response = self.client.messages.create(
-                model=self.model,
-                system=self.system_message,
-                max_tokens=2048,
-                messages=self.chat_history.get_messages()[1:],  # Exclude system message
-                tools=self.processed_tools,
-            )
-            content = response.content[0].text or ""
-            self.chat_history.add_message("assistant", content)
-            return content
-        else:
-            content = response.content[0].text or ""
-            self.chat_history.add_message("assistant", content)
-            return content
-
-    async def _process_async_response(self, response) -> str:
-        if response.stop_reason == "tool_use":
-            self.chat_history.add_message("assistant", response.content)
-
-            tool_response_content = []
-            tool_use = None
-
-            for res in response.content:
-                if res.type != "tool_use":
-                    continue
-                tool_use = res
-
-                tool_id = tool_use.id
-                tool_name = tool_use.name
-                tool_input = tool_use.input
-
-                function = self.get_tool_function(tool_name)
-                print(f"Calling function {tool_name} with args {tool_input}")
-                result = function(**tool_input)
-
-                tool_response = {
-                    "type": "tool_result",
-                    "tool_use_id": tool_id,
-                    "content": str(result),
-                }
-
-                tool_response_content.append(tool_response)
-
-            self.chat_history.add_message("user", tool_response_content)
-
-            # make another api call to get the response after the tool has been used
-            response = await self.async_client.messages.create(
-                model=self.model,
-                system=self.system_message,
-                max_tokens=2048,
-                messages=self.chat_history.get_messages()[1:],  # Exclude system message
-                tools=self.processed_tools,
-            )
-            content = response.content[0].text or ""
-            self.chat_history.add_message("assistant", content)
-            return content
-        else:
-            content = response.content[0].text or ""
-            self.chat_history.add_message("assistant", content)
-            return content
+            # Recursively call astream_invoke() without passing any user input
+            async for chunk in self.astream_invoke():
+                yield chunk
 
     def get_history(self) -> List[Dict[str, str]]:
         return self.chat_history.get_messages()
