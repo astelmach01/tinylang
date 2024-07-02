@@ -121,7 +121,7 @@ class ChatClaude(ChatBase):
             messages=messages,
             tools=self.processed_tools,
         )
-        return self._process_response(response)
+        return await self._process_async_response(response)
 
     def stream_invoke(self, prompt: str) -> Iterator[str]:
         self.chat_history.add_message("user", prompt)
@@ -277,6 +277,52 @@ class ChatClaude(ChatBase):
             self.chat_history.add_message("user", tool_response_content)
             # make another api call to get the response after the tool has been used
             response = self.client.messages.create(
+                model=self.model,
+                system=self.system_message,
+                max_tokens=2048,
+                messages=self.chat_history.get_messages()[1:],  # Exclude system message
+                tools=self.processed_tools,
+            )
+            content = response.content[0].text or ""
+            self.chat_history.add_message("assistant", content)
+            return content
+        else:
+            content = response.content[0].text or ""
+            self.chat_history.add_message("assistant", content)
+            return content
+
+    async def _process_async_response(self, response) -> str:
+        if response.stop_reason == "tool_use":
+            self.chat_history.add_message("assistant", response.content)
+
+            tool_response_content = []
+            tool_use = None
+
+            for res in response.content:
+                if res.type != "tool_use":
+                    continue
+                tool_use = res
+
+                tool_id = tool_use.id
+                tool_name = tool_use.name
+                tool_input = tool_use.input
+
+                function = self.get_tool_function(tool_name)
+                print(f"Calling function {tool_name} with args {tool_input}")
+                result = function(**tool_input)
+
+                tool_response = {
+                    "type": "tool_result",
+                    "tool_use_id": tool_id,
+                    "content": str(result),
+                }
+
+                tool_response_content.append(tool_response)
+
+            self.chat_history.add_message("user", tool_response_content)
+
+            # make another api call to get the response after the tool has been used
+            response = await self.async_client.messages.create(
                 model=self.model,
                 system=self.system_message,
                 max_tokens=2048,

@@ -61,7 +61,7 @@ class ChatOpenAI(ChatBase):
             tools=self.processed_tools,
             tool_choice=self.tool_choice,
         )
-        return self._process_response(response)
+        return await self._aprocess_response(response)
 
     def stream_invoke(self, user_input: str) -> Iterator[str]:
         self.chat_history.add_message("user", user_input)
@@ -297,6 +297,44 @@ class ChatOpenAI(ChatBase):
                 self.chat_history.messages.append(
                     {"role": "assistant", "content": full_response}
                 )
+
+    async def _aprocess_response(self, response: ChatCompletion) -> str:
+        message = response.choices[0].message
+        if message.tool_calls:
+            self.chat_history.messages.append(message)
+
+            for tool_call in message.tool_calls:
+                function_name = tool_call.function.name
+                function_args = json.loads(tool_call.function.arguments)
+
+                print(f"Calling function {function_name} with args {function_args}")
+                try:
+                    function_to_call = self.get_tool_function(function_name)
+                    result = function_to_call(**function_args)
+                except ValueError:
+                    result = f"Function '{function_name}' is not implemented."
+
+                self.chat_history.messages.append(
+                    {
+                        "role": "tool",
+                        "tool_call_id": tool_call.id,
+                        "name": function_name,
+                        "content": str(result),
+                    }
+                )
+            # Make another API call with the updated messages including tool results
+            messages = self.chat_history.get_messages()
+            response = await self.async_client.chat.completions.create(
+                model=self.model,
+                messages=messages,
+            )
+            content = response.choices[0].message.content or ""
+            self.chat_history.add_message("assistant", content)
+            return content
+        else:
+            content = message.content or ""
+            self.chat_history.add_message("assistant", content)
+            return content
 
     def get_history(self) -> List[Dict[str, str]]:
         return self.chat_history.get_messages()
