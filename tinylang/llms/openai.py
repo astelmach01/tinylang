@@ -38,7 +38,7 @@ class ChatOpenAI(ChatBase):
             raise ValueError("No tools have been set for this chat instance")
         for tool in self.original_tools:
             if tool.name == function_name:
-                return tool.function
+                return tool.function, tool.is_async
         raise ValueError(f"Function {function_name} not found in tools")
 
     def invoke(self, user_input: Optional[str] = None) -> str:
@@ -104,11 +104,12 @@ class ChatOpenAI(ChatBase):
                 function_args = json.loads(tool_call.function.arguments)
 
                 print(f"Calling function {function_name} with args {function_args}")
-                try:
-                    function_to_call = self.get_tool_function(function_name)
-                    result = function_to_call(**function_args)
-                except ValueError:
-                    result = f"Function '{function_name}' is not implemented."
+                function_to_call, is_async = self.get_tool_function(function_name)
+                if is_async:
+                    raise ValueError(
+                        "Async tools cannot be used with synchronous methods. Use the async methods instead such as .ainvoke()."
+                    )
+                result = function_to_call(**function_args)
 
                 self.chat_history.messages.append(
                     {
@@ -166,12 +167,12 @@ class ChatOpenAI(ChatBase):
             for tool_call in tool_calls:
                 function_name = tool_call["function"]["name"]
                 function_args = json.loads(tool_call["function"]["arguments"])
-                try:
-                    function_to_call = self.get_tool_function(function_name)
-                    print(f"Calling function {function_name} with args {function_args}")
-                    result = function_to_call(**function_args)
-                except ValueError:
-                    result = f"Function '{function_name}' is not implemented."
+                function_to_call, is_async = self.get_tool_function(function_name)
+                if is_async:
+                    raise ValueError(
+                        "Async tools cannot be used with synchronous methods. Use the async methods instead such as .astream_invoke()."
+                    )
+                result = function_to_call(**function_args)
 
                 self.chat_history.messages.append(
                     {
@@ -228,12 +229,12 @@ class ChatOpenAI(ChatBase):
             for tool_call in tool_calls:
                 function_name = tool_call["function"]["name"]
                 function_args = json.loads(tool_call["function"]["arguments"])
-                try:
-                    function_to_call = self.get_tool_function(function_name)
-                    print(f"Calling function {function_name} with args {function_args}")
+                function_to_call, is_async = self.get_tool_function(function_name)
+                print(f"Calling function {function_name} with args {function_args}")
+                if is_async:
+                    result = await function_to_call(**function_args)
+                else:
                     result = function_to_call(**function_args)
-                except ValueError:
-                    result = f"Function '{function_name}' is not implemented."
 
                 self.chat_history.messages.append(
                     {
@@ -261,8 +262,11 @@ class ChatOpenAI(ChatBase):
 
                 print(f"Calling function {function_name} with args {function_args}")
                 try:
-                    function_to_call = self.get_tool_function(function_name)
-                    result = function_to_call(**function_args)
+                    function_to_call, is_async = self.get_tool_function(function_name)
+                    if is_async:
+                        result = await function_to_call(**function_args)
+                    else:
+                        return function_to_call(**function_args)
                 except ValueError:
                     result = f"Function '{function_name}' is not implemented."
 

@@ -95,7 +95,7 @@ class ChatClaude(ChatBase):
 
         for tool in self.original_tools:
             if tool.name == function_name:
-                return tool.function
+                return tool.function, tool.is_async
 
         raise ValueError(f"Tool {function_name} not found.")
 
@@ -166,7 +166,11 @@ class ChatClaude(ChatBase):
                 tool_name = res.name
                 tool_input = res.input
 
-                function = self.get_tool_function(tool_name)
+                function, is_async = self.get_tool_function(tool_name)
+                if is_async:
+                    raise ValueError(
+                        "Async tools cannot be used with synchronous methods, use ainvoke() instead."
+                    )
                 print(f"Calling function {tool_name} with args {tool_input}")
                 result = function(**tool_input)
 
@@ -201,9 +205,12 @@ class ChatClaude(ChatBase):
                 tool_name = res.name
                 tool_input = res.input
 
-                function = self.get_tool_function(tool_name)
+                function, is_async = self.get_tool_function(tool_name)
                 print(f"Calling function {tool_name} with args {tool_input}")
-                result = function(**tool_input)  # Removed await
+                if is_async:
+                    result = await function(**tool_input)
+                else:
+                    result = function(**tool_input)
 
                 tool_response = {
                     "type": "tool_result",
@@ -242,20 +249,22 @@ class ChatClaude(ChatBase):
             for tool_call in tool_calls:
                 function_name = tool_call.name
                 function_args = tool_call.input
-                try:
-                    function_to_call = self.get_tool_function(function_name)
-                    print(f"Calling function {function_name} with args {function_args}")
-                    function_response = function_to_call(**function_args)
 
-                    tool_result = {
-                        "type": "tool_result",
-                        "tool_use_id": tool_call.id,
-                        "content": str(function_response),
-                    }
+                function_to_call, is_async = self.get_tool_function(function_name)
+                if is_async:
+                    raise ValueError(
+                        "Async tools cannot be used with synchronous methods, use astream_invoke() instead."
+                    )
+                print(f"Calling function {function_name} with args {function_args}")
+                function_response = function_to_call(**function_args)
 
-                    tool_response_content.append(tool_result)
-                except Exception as e:
-                    print(f"Error calling function {function_name}: {str(e)}")
+                tool_result = {
+                    "type": "tool_result",
+                    "tool_use_id": tool_call.id,
+                    "content": str(function_response),
+                }
+
+                tool_response_content.append(tool_result)
 
             self.chat_history.add_message("user", str(tool_response_content))
 
@@ -282,22 +291,21 @@ class ChatClaude(ChatBase):
             for tool_call in tool_calls:
                 function_name = tool_call.name
                 function_args = tool_call.input
-                try:
-                    function_to_call = self.get_tool_function(function_name)
-                    print(f"Calling function {function_name} with args {function_args}")
-                    function_response = function_to_call(
-                        **function_args
-                    )  # Removed await
+                function_to_call, is_async = self.get_tool_function(function_name)
 
-                    tool_result = {
-                        "type": "tool_result",
-                        "tool_use_id": tool_call.id,
-                        "content": str(function_response),
-                    }
+                print(f"Calling function {function_name} with args {function_args}")
+                if is_async:
+                    function_response = await function_to_call(**function_args)
+                else:
+                    function_response = function_to_call(**function_args)
 
-                    tool_response_content.append(tool_result)
-                except Exception as e:
-                    print(f"Error calling function {function_name}: {str(e)}")
+                tool_result = {
+                    "type": "tool_result",
+                    "tool_use_id": tool_call.id,
+                    "content": str(function_response),
+                }
+
+                tool_response_content.append(tool_result)
 
             self.chat_history.add_message("user", str(tool_response_content))
 

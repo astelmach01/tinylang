@@ -1,6 +1,7 @@
-from typing import List, Dict, Any, Callable, Optional, Type
+from typing import List, Dict, Any, Callable, Optional, Type, Union
 from pydantic import BaseModel, create_model
 from pydantic.json_schema import model_json_schema
+import inspect
 
 
 class Tool:
@@ -8,13 +9,14 @@ class Tool:
         self,
         name: str,
         description: str,
-        function: Callable,
+        function: Union[Callable, Callable[..., Any]],
         input_model: Optional[Type[BaseModel]] = None,
     ):
         self.name = name
         self.description = description
         self.function = function
         self.input_model = input_model or self._create_input_model()
+        self.is_async = inspect.iscoroutinefunction(function)
 
     def to_dict(self) -> Dict[str, Any]:
         schema = model_json_schema(self.input_model)
@@ -38,16 +40,4 @@ class Tool:
 
 
 def process_tools(tools: List[Tool]) -> List[Dict[str, Any]]:
-    return [
-        {
-            "type": "function",
-            "function": {
-                "name": tool.name,
-                "description": tool.description,
-                "parameters": (
-                    tool.input_model.model_json_schema() if tool.input_model else {}
-                ),
-            },
-        }
-        for tool in tools
-    ]
+    return [tool.to_dict() for tool in tools]
