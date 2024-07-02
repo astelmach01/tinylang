@@ -19,7 +19,7 @@ class ChatClaude(ChatBase):
         chat_history: int = 0,
         previous_history: Optional[List[Dict[str, str]]] = None,
         tools: Optional[List[Tool]] = None,
-        tool_choice: Optional[str | Dict] = None,
+        tool_choice: str | Dict = "auto",
     ) -> None:
         api_key = get_api_key(api_key, "ANTHROPIC_API_KEY")
         init_kwargs.update({"api_key": api_key})
@@ -32,7 +32,7 @@ class ChatClaude(ChatBase):
         )
         self.original_tools = tools
         self.processed_tools = self._process_tools(tools)
-        self.tool_choice = tool_choice if tools else None
+        self.tool_choice = tool_choice
 
     def _process_tools(
         self, tools: Optional[List[Tool]]

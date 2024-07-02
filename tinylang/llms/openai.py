@@ -18,7 +18,7 @@ class ChatOpenAI(ChatBase):
         chat_history: int = 0,
         previous_history: Optional[List[Dict[str, str]]] = None,
         tools: Optional[List[Tool]] = None,
-        tool_choice: Optional[str] = None,
+        tool_choice: str | Dict = "auto",
     ) -> None:
         api_key = get_api_key(api_key, "OPENAI_API_KEY")
         init_kwargs.update({"api_key": api_key})
@@ -31,7 +31,7 @@ class ChatOpenAI(ChatBase):
         )
         self.original_tools = tools
         self.processed_tools = process_tools(tools) if tools else None
-        self.tool_choice = tool_choice if tools else None
+        self.tool_choice = tool_choice
 
     def get_tool_function(self, function_name: str):
         if not self.original_tools:

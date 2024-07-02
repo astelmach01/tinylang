@@ -123,7 +123,6 @@ asyncio.run(get_weather())
 
 Both `ChatOpenAI` and `ChatClaude` support streaming responses, even when using tools:
 
-
 ```python
 for chunk in chat.stream_invoke("Calculate 12 times 8 and then get the weather in London."):
     print(chunk, end='', flush=True)
@@ -135,6 +134,13 @@ async def stream_response():
 
 asyncio.run(stream_response())
 ```
+
+## Configuring Tool Choice in Chat Interfaces
+
+In the `ChatX` classes, the `tool_choice` parameter determines how the model selects and uses tools. Refer to the appropriate documentation, as this is directly passed into the client when creating a request.
+
+[OpenAI](https://platform.openai.com/docs/guides/function-calling)
+[Anthropic](https://docs.anthropic.com/en/docs/build-with-claude/tool-use#controlling-claudes-output)
 
 ## Notebook-style Example
 
