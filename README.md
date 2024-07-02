@@ -90,9 +90,6 @@ For more detailed information about using Tinylang, please refer to our [documen
 
 ## To be Added
 
-- async tool use response
-- recursive tool use calling
-- function calling for gemini
-- return usage after using a function
-- async tools
-- refactor
+- better docs
+- update gemini
+- refactor code
