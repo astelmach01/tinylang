@@ -19,7 +19,7 @@ class ChatClaude(ChatBase):
         chat_history: int = 0,
         previous_history: Optional[List[Dict[str, str]]] = None,
         tools: Optional[List[Tool]] = None,
-        tool_choice: Optional[str] = None,
+        tool_choice: str | Dict = "auto",
     ) -> None:
         api_key = get_api_key(api_key, "ANTHROPIC_API_KEY")
         init_kwargs.update({"api_key": api_key})
@@ -32,7 +32,7 @@ class ChatClaude(ChatBase):
         )
         self.original_tools = tools
         self.processed_tools = self._process_tools(tools)
-        self.tool_choice = tool_choice if tools else None
+        self.tool_choice = tool_choice
 
     def _process_tools(
         self, tools: Optional[List[Tool]]
@@ -109,6 +109,7 @@ class ChatClaude(ChatBase):
             max_tokens=max_tokens,
             messages=messages,
             tools=self.processed_tools,
+            tool_choice=self.tool_choice,
         )
         return self._process_response(response)
 
@@ -122,6 +123,7 @@ class ChatClaude(ChatBase):
             max_tokens=2048,
             messages=messages,
             tools=self.processed_tools,
+            tool_choice=self.tool_choice,
         )
         return await self._process_async_response(response)
 
@@ -135,6 +137,7 @@ class ChatClaude(ChatBase):
             max_tokens=2048,
             messages=messages,
             tools=self.processed_tools,
+            tool_choice=self.tool_choice,
         ) as stream:
             yield from self._stream_process_response(stream)
 
@@ -148,6 +151,7 @@ class ChatClaude(ChatBase):
             max_tokens=2048,
             messages=messages,
             tools=self.processed_tools,
+            tool_choice=self.tool_choice,
         ) as stream:
             async for chunk in self._astream_process_response(stream):
                 yield chunk
