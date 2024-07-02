@@ -41,8 +41,9 @@ class ChatOpenAI(ChatBase):
                 return tool.function
         raise ValueError(f"Function {function_name} not found in tools")
 
-    def invoke(self, user_input: str) -> str:
-        self.chat_history.add_message("user", user_input)
+    def invoke(self, user_input: Optional[str] = None) -> str:
+        if user_input:
+            self.chat_history.add_message("user", user_input)
         messages = self.chat_history.get_messages()
         response = self.client.chat.completions.create(
             model=self.model,
@@ -52,8 +53,9 @@ class ChatOpenAI(ChatBase):
         )
         return self._process_response(response)
 
-    async def ainvoke(self, user_input: str) -> str:
-        self.chat_history.add_message("user", user_input)
+    async def ainvoke(self, user_input: Optional[str] = None) -> str:
+        if user_input:
+            self.chat_history.add_message("user", user_input)
         messages = self.chat_history.get_messages()
         response = await self.async_client.chat.completions.create(
             model=self.model,
@@ -63,8 +65,9 @@ class ChatOpenAI(ChatBase):
         )
         return await self._aprocess_response(response)
 
-    def stream_invoke(self, user_input: str) -> Iterator[str]:
-        self.chat_history.add_message("user", user_input)
+    def stream_invoke(self, user_input: Optional[str] = None) -> Iterator[str]:
+        if user_input:
+            self.chat_history.add_message("user", user_input)
         messages = self.chat_history.get_messages()
         response = self.client.chat.completions.create(
             model=self.model,
@@ -73,10 +76,13 @@ class ChatOpenAI(ChatBase):
             tool_choice=self.tool_choice,
             stream=True,
         )
-        return self._stream_process_response(response)
+        yield from self._stream_process_response(response)
 
-    async def astream_invoke(self, user_input: str) -> AsyncIterable[str]:
-        self.chat_history.add_message("user", user_input)
+    async def astream_invoke(
+        self, user_input: Optional[str] = None
+    ) -> AsyncIterator[str]:
+        if user_input:
+            self.chat_history.add_message("user", user_input)
         messages = self.chat_history.get_messages()
         response = await self.async_client.chat.completions.create(
             model=self.model,
@@ -112,42 +118,30 @@ class ChatOpenAI(ChatBase):
                         "content": str(result),
                     }
                 )
-            # Make another API call with the updated messages including tool results
-            messages = self.chat_history.get_messages()
-            response = self.client.chat.completions.create(
-                model=self.model,
-                messages=messages,
-            )
-            content = response.choices[0].message.content or ""
-            self.chat_history.add_message("assistant", content)
-            return content
+
+            return self.invoke()
         else:
-            content = message.content or ""
+            content = message.content
             self.chat_history.add_message("assistant", content)
             return content
 
     def _stream_process_response(
         self, response: Iterator[ChatCompletion]
     ) -> Iterator[str]:
-        tool_calls = []  # Accumulator for tool calls to process later
-        full_delta_content = ""  # Accumulator for delta content to process later
+        tool_calls = []
+        full_content = ""
 
         for chunk in response:
             if not chunk.choices:
                 continue
 
-            delta = (
-                chunk.choices[0].delta
-                if chunk.choices and chunk.choices[0].delta is not None
-                else None
-            )
-            if delta and delta.content:
-                full_delta_content += delta.content
+            delta = chunk.choices[0].delta
+            if delta.content:
+                full_content += delta.content
                 yield delta.content
 
-            elif delta and delta.tool_calls:
-                tc_chunk_list = delta.tool_calls
-                for tc_chunk in tc_chunk_list:
+            if delta.tool_calls:
+                for tc_chunk in delta.tool_calls:
                     if len(tool_calls) <= tc_chunk.index:
                         tool_calls.append(
                             {
@@ -164,9 +158,7 @@ class ChatOpenAI(ChatBase):
                     if tc_chunk.function and tc_chunk.function.arguments:
                         tc["function"]["arguments"] += tc_chunk.function.arguments
 
-        if not tool_calls and full_delta_content:
-            self.chat_history.add_message("assistant", full_delta_content)
-        elif tool_calls:
+        if tool_calls:
             self.chat_history.messages.append(
                 {"role": "assistant", "content": None, "tool_calls": tool_calls}
             )
@@ -177,62 +169,41 @@ class ChatOpenAI(ChatBase):
                 try:
                     function_to_call = self.get_tool_function(function_name)
                     print(f"Calling function {function_name} with args {function_args}")
-                    function_response = function_to_call(**function_args)
+                    result = function_to_call(**function_args)
                 except ValueError:
-                    function_response = (
-                        f"Function '{function_name}' is not implemented."
-                    )
+                    result = f"Function '{function_name}' is not implemented."
 
                 self.chat_history.messages.append(
                     {
                         "role": "tool",
                         "tool_call_id": tool_call["id"],
                         "name": function_name,
-                        "content": str(function_response),
+                        "content": str(result),
                     }
                 )
 
-            messages = self.chat_history.get_messages()
-            response = self.client.chat.completions.create(
-                model=self.model,
-                messages=messages,
-                stream=True,
-            )
-            full_response = ""
-            for chunk in response:
-                for choice in chunk.choices:
-                    delta = choice.delta
-                    if delta.content:
-                        full_response += delta.content
-                        yield delta.content
-
-            if full_response:
-                self.chat_history.messages.append(
-                    {"role": "assistant", "content": full_response}
-                )
+            # Recursively call stream_invoke() without passing any user input
+            yield from self.stream_invoke()
+        else:
+            self.chat_history.add_message("assistant", full_content)
 
     async def _astream_process_response(
         self, response: AsyncIterator[ChatCompletion]
     ) -> AsyncIterator[str]:
-        tool_calls = []  # Accumulator for tool calls to process later
-        full_delta_content = ""  # Accumulator for delta content to process later
+        tool_calls = []
+        full_content = ""
 
         async for chunk in response:
             if not chunk.choices:
                 continue
 
-            delta = (
-                chunk.choices[0].delta
-                if chunk.choices and chunk.choices[0].delta is not None
-                else None
-            )
-            if delta and delta.content:
-                full_delta_content += delta.content
+            delta = chunk.choices[0].delta
+            if delta.content:
+                full_content += delta.content
                 yield delta.content
 
-            elif delta and delta.tool_calls:
-                tc_chunk_list = delta.tool_calls
-                for tc_chunk in tc_chunk_list:
+            if delta.tool_calls:
+                for tc_chunk in delta.tool_calls:
                     if len(tool_calls) <= tc_chunk.index:
                         tool_calls.append(
                             {
@@ -249,11 +220,7 @@ class ChatOpenAI(ChatBase):
                     if tc_chunk.function and tc_chunk.function.arguments:
                         tc["function"]["arguments"] += tc_chunk.function.arguments
 
-        if not tool_calls and full_delta_content:
-            self.chat_history.messages.append(
-                {"role": "assistant", "content": full_delta_content}
-            )
-        elif tool_calls:
+        if tool_calls:
             self.chat_history.messages.append(
                 {"role": "assistant", "content": None, "tool_calls": tool_calls}
             )
@@ -264,39 +231,24 @@ class ChatOpenAI(ChatBase):
                 try:
                     function_to_call = self.get_tool_function(function_name)
                     print(f"Calling function {function_name} with args {function_args}")
-                    function_response = function_to_call(**function_args)
+                    result = function_to_call(**function_args)
                 except ValueError:
-                    function_response = (
-                        f"Function '{function_name}' is not implemented."
-                    )
+                    result = f"Function '{function_name}' is not implemented."
 
                 self.chat_history.messages.append(
                     {
                         "role": "tool",
                         "tool_call_id": tool_call["id"],
                         "name": function_name,
-                        "content": str(function_response),
+                        "content": str(result),
                     }
                 )
 
-            messages = self.chat_history.get_messages()
-            async_response = await self.async_client.chat.completions.create(
-                model=self.model,
-                messages=messages,
-                stream=True,
-            )
-            full_response = ""
-            async for chunk in async_response:
-                for choice in chunk.choices:
-                    delta = choice.delta
-                    if delta.content:
-                        full_response += delta.content
-                        yield delta.content
-
-            if full_response:
-                self.chat_history.messages.append(
-                    {"role": "assistant", "content": full_response}
-                )
+            # Recursively call astream_invoke() without passing any user input
+            async for chunk in self.astream_invoke():
+                yield chunk
+        else:
+            self.chat_history.add_message("assistant", full_content)
 
     async def _aprocess_response(self, response: ChatCompletion) -> str:
         message = response.choices[0].message
@@ -322,17 +274,11 @@ class ChatOpenAI(ChatBase):
                         "content": str(result),
                     }
                 )
-            # Make another API call with the updated messages including tool results
-            messages = self.chat_history.get_messages()
-            response = await self.async_client.chat.completions.create(
-                model=self.model,
-                messages=messages,
-            )
-            content = response.choices[0].message.content or ""
-            self.chat_history.add_message("assistant", content)
-            return content
+
+            # Recursively call ainvoke() without passing any user input
+            return await self.ainvoke()
         else:
-            content = message.content or ""
+            content = message.content
             self.chat_history.add_message("assistant", content)
             return content
 
