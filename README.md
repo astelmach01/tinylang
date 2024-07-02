@@ -90,6 +90,9 @@ For more detailed information about using Tinylang, please refer to our [documen
 
 ## To be Added
 
+- tool choice in claude and openai 
 - better docs
+- infinite, or 0 length chat history
 - update gemini
 - refactor code
+- return structured output
