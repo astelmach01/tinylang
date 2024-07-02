@@ -140,7 +140,10 @@ asyncio.run(stream_response())
 In the `ChatX` classes, the `tool_choice` parameter determines how the model selects and uses tools. Refer to the appropriate documentation, as this is directly passed into the client when creating a request.
 
 [OpenAI](https://platform.openai.com/docs/guides/function-calling)
+
 [Anthropic](https://docs.anthropic.com/en/docs/build-with-claude/tool-use#controlling-claudes-output)
+
+[Gemini](https://cloud.google.com/vertex-ai/generative-ai/docs/multimodal/function-calling#tool-config)
 
 ## Notebook-style Example
 
