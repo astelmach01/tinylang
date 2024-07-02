@@ -488,8 +488,22 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#complex-tool-example" class="md-nav__link">
-    Complex Tool Example
+  <a href="#streaming-responses-with-tools" class="md-nav__link">
+    Streaming Responses with Tools
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#configuring-tool-choice-in-chat-interfaces" class="md-nav__link">
+    Configuring Tool Choice in Chat Interfaces
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#notebook-style-example" class="md-nav__link">
+    Notebook-style Example
   </a>
   
 </li>
@@ -578,8 +592,22 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#complex-tool-example" class="md-nav__link">
-    Complex Tool Example
+  <a href="#streaming-responses-with-tools" class="md-nav__link">
+    Streaming Responses with Tools
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#configuring-tool-choice-in-chat-interfaces" class="md-nav__link">
+    Configuring Tool Choice in Chat Interfaces
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#notebook-style-example" class="md-nav__link">
+    Notebook-style Example
   </a>
   
 </li>
@@ -610,7 +638,7 @@
 
 
 <h1 id="tool-usage-in-tinylang">Tool Usage in Tinylang<a class="headerlink" href="#tool-usage-in-tinylang" title="Permanent link">&para;</a></h1>
-<p>Tools in Tinylang allow language models to call specific functions when needed, enhancing their capabilities and allowing for more complex interactions. This document explains how to create, implement, and use tools across different chat interfaces in Tinylang.</p>
+<p>Tools in Tinylang allow language models to call specific functions when needed, enhancing their capabilities and allowing for more complex interactions. This document explains how to create, implement, and use both synchronous and asynchronous tools across different chat interfaces in Tinylang.</p>
 <h2 id="creating-tools">Creating Tools<a class="headerlink" href="#creating-tools" title="Permanent link">&para;</a></h2>
 <p>Tools are created using the <code>Tool</code> class from the <code>tinylang.tools</code> module. Here's the basic structure of a tool:</p>
 <div class="language-python highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">tinylang.tools</span> <span class="kn">import</span> <span class="n">Tool</span>
@@ -624,6 +652,22 @@
     <span class="n">name</span><span class="o">=</span><span class="s2">&quot;my_function_name&quot;</span><span class="p">,</span>
     <span class="n">description</span><span class="o">=</span><span class="s2">&quot;A brief description of what the function does&quot;</span><span class="p">,</span>
     <span class="n">function</span><span class="o">=</span><span class="n">my_function</span>
+<span class="p">)</span>
+</code></pre></div>
+<p>For asynchronous tools, use an async function:</p>
+<div class="language-python highlight"><pre><span></span><code><span class="kn">import</span> <span class="nn">asyncio</span>
+<span class="kn">from</span> <span class="nn">tinylang.tools</span> <span class="kn">import</span> <span class="n">Tool</span>
+
+<span class="k">async</span> <span class="k">def</span> <span class="nf">my_async_function</span><span class="p">(</span><span class="n">param1</span><span class="p">:</span> <span class="n">type1</span><span class="p">,</span> <span class="n">param2</span><span class="p">:</span> <span class="n">type2</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">return_type</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Async function description.&quot;&quot;&quot;</span>
+    <span class="c1"># Async function implementation</span>
+    <span class="k">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>  <span class="c1"># Simulating an async operation</span>
+    <span class="k">return</span> <span class="n">result</span>
+
+<span class="n">my_async_tool</span> <span class="o">=</span> <span class="n">Tool</span><span class="p">(</span>
+    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;my_async_function_name&quot;</span><span class="p">,</span>
+    <span class="n">description</span><span class="o">=</span><span class="s2">&quot;A brief description of what the async function does&quot;</span><span class="p">,</span>
+    <span class="n">function</span><span class="o">=</span><span class="n">my_async_function</span>
 <span class="p">)</span>
 </code></pre></div>
 <p>The <code>Tool</code> class automatically infers the function's parameter types and creates an appropriate input model. However, you can also specify a custom input model if needed:</p>
@@ -641,7 +685,7 @@
 <span class="p">)</span>
 </code></pre></div>
 <h2 id="implementing-tools-in-chat-interfaces">Implementing Tools in Chat Interfaces<a class="headerlink" href="#implementing-tools-in-chat-interfaces" title="Permanent link">&para;</a></h2>
-<p>Currently, tool usage is primarily implemented in the <code>ChatOpenAI</code> class. Here's how to initialize a chat interface with tools:</p>
+<p>Tools can be implemented in both the <code>ChatOpenAI</code> and <code>ChatClaude</code> classes. Here's how to initialize a chat interface with tools:</p>
 <div class="language-python highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">tinylang.llms</span> <span class="kn">import</span> <span class="n">ChatOpenAI</span>
 <span class="kn">from</span> <span class="nn">tinylang.tools</span> <span class="kn">import</span> <span class="n">Tool</span>
 
@@ -649,11 +693,22 @@
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Multiply two numbers.&quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">a</span> <span class="o">*</span> <span class="n">b</span>
 
+<span class="k">async</span> <span class="k">def</span> <span class="nf">fetch_weather</span><span class="p">(</span><span class="n">city</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Fetch weather for a city.&quot;&quot;&quot;</span>
+    <span class="c1"># Simulating an async API call</span>
+    <span class="k">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+    <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;The weather in </span><span class="si">{</span><span class="n">city</span><span class="si">}</span><span class="s2"> is sunny.&quot;</span>
+
 <span class="n">tools</span> <span class="o">=</span> <span class="p">[</span>
     <span class="n">Tool</span><span class="p">(</span>
         <span class="n">name</span><span class="o">=</span><span class="s2">&quot;multiply&quot;</span><span class="p">,</span>
         <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Multiply two integers&quot;</span><span class="p">,</span>
         <span class="n">function</span><span class="o">=</span><span class="n">multiply</span>
+    <span class="p">),</span>
+    <span class="n">Tool</span><span class="p">(</span>
+        <span class="n">name</span><span class="o">=</span><span class="s2">&quot;fetch_weather&quot;</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Fetch weather for a city&quot;</span><span class="p">,</span>
+        <span class="n">function</span><span class="o">=</span><span class="n">fetch_weather</span>
     <span class="p">)</span>
 <span class="p">]</span>
 
@@ -663,7 +718,7 @@
     <span class="n">tool_choice</span><span class="o">=</span><span class="s2">&quot;auto&quot;</span>
 <span class="p">)</span>
 </code></pre></div>
-<p>The <code>tool_choice</code> parameter determines how the model decides which function to call. Options include:</p>
+<p>The <code>tool_choice</code> parameter in <code>ChatOpenAI</code> determines how the model decides which function to call. Options include:</p>
 <ul>
 <li><code>"auto"</code>: The model decides whether to call a function and which one to call.</li>
 <li><code>"none"</code>: The model is not allowed to call any functions.</li>
@@ -671,62 +726,98 @@
 </ul>
 <h2 id="using-tools-in-conversations">Using Tools in Conversations<a class="headerlink" href="#using-tools-in-conversations" title="Permanent link">&para;</a></h2>
 <p>Once tools are implemented, you can use them in conversations just like normal chat interactions. The model will automatically decide when to use a tool based on the context of the conversation.</p>
-<div class="language-python highlight"><pre><span></span><code><span class="n">response</span> <span class="o">=</span> <span class="n">chat</span><span class="o">.</span><span class="n">invoke</span><span class="p">(</span><span class="s2">&quot;What is 7 times 8?&quot;</span><span class="p">)</span>
+<div class="language-python highlight"><pre><span></span><code><span class="c1"># Synchronous invocation</span>
+<span class="n">response</span> <span class="o">=</span> <span class="n">chat</span><span class="o">.</span><span class="n">invoke</span><span class="p">(</span><span class="s2">&quot;What is 7 times 8?&quot;</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">response</span><span class="p">)</span>
-</code></pre></div>
-<p>This might result in:</p>
-<div class="language-text highlight"><pre><span></span><code>To calculate 7 times 8, I&#39;ll use the multiply function.
 
-7 times 8 equals 56.
+<span class="c1"># Asynchronous invocation</span>
+<span class="k">async</span> <span class="k">def</span> <span class="nf">get_weather</span><span class="p">():</span>
+    <span class="n">response</span> <span class="o">=</span> <span class="k">await</span> <span class="n">chat</span><span class="o">.</span><span class="n">ainvoke</span><span class="p">(</span><span class="s2">&quot;What&#39;s the weather like in New York?&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">response</span><span class="p">)</span>
 
-Is there anything else you&#39;d like to know?
+<span class="n">asyncio</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">get_weather</span><span class="p">())</span>
 </code></pre></div>
-<h2 id="complex-tool-example">Complex Tool Example<a class="headerlink" href="#complex-tool-example" title="Permanent link">&para;</a></h2>
-<p>Here's an example of a more complex tool that calculates statistics for a list of numbers:</p>
-<div class="language-python highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">tinylang.llms</span> <span class="kn">import</span> <span class="n">ChatOpenAI</span>
+<h2 id="streaming-responses-with-tools">Streaming Responses with Tools<a class="headerlink" href="#streaming-responses-with-tools" title="Permanent link">&para;</a></h2>
+<p>Both <code>ChatOpenAI</code> and <code>ChatClaude</code> support streaming responses, even when using tools:</p>
+<div class="language-python highlight"><pre><span></span><code><span class="k">for</span> <span class="n">chunk</span> <span class="ow">in</span> <span class="n">chat</span><span class="o">.</span><span class="n">stream_invoke</span><span class="p">(</span><span class="s2">&quot;Calculate 12 times 8 and then get the weather in London.&quot;</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">chunk</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">flush</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="c1"># Asynchronous streaming</span>
+<span class="k">async</span> <span class="k">def</span> <span class="nf">stream_response</span><span class="p">():</span>
+    <span class="k">async</span> <span class="k">for</span> <span class="n">chunk</span> <span class="ow">in</span> <span class="n">chat</span><span class="o">.</span><span class="n">astream_invoke</span><span class="p">(</span><span class="s2">&quot;What&#39;s 15 times 4? Then check the weather in Tokyo.&quot;</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">chunk</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">flush</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="n">asyncio</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">stream_response</span><span class="p">())</span>
+</code></pre></div>
+<h2 id="configuring-tool-choice-in-chat-interfaces">Configuring Tool Choice in Chat Interfaces<a class="headerlink" href="#configuring-tool-choice-in-chat-interfaces" title="Permanent link">&para;</a></h2>
+<p>In the <code>ChatX</code> classes, the <code>tool_choice</code> parameter determines how the model selects and uses tools. Refer to the appropriate documentation, as this is directly passed into the client when creating a request.</p>
+<p><a href="https://platform.openai.com/docs/guides/function-calling">OpenAI</a>
+<a href="https://docs.anthropic.com/en/docs/build-with-claude/tool-use#controlling-claudes-output">Anthropic</a></p>
+<h2 id="notebook-style-example">Notebook-style Example<a class="headerlink" href="#notebook-style-example" title="Permanent link">&para;</a></h2>
+<p>Here's a more comprehensive example that you might use in a Jupyter notebook:</p>
+<div class="language-python highlight"><pre><span></span><code><span class="kn">import</span> <span class="nn">asyncio</span>
+<span class="kn">from</span> <span class="nn">tinylang.llms</span> <span class="kn">import</span> <span class="n">ChatOpenAI</span><span class="p">,</span> <span class="n">ChatClaude</span>
 <span class="kn">from</span> <span class="nn">tinylang.tools</span> <span class="kn">import</span> <span class="n">Tool</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span>
-<span class="kn">import</span> <span class="nn">statistics</span>
 
-<span class="k">def</span> <span class="nf">calculate_stats</span><span class="p">(</span><span class="n">numbers</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Calculate various statistics for a list of numbers.&quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="p">{</span>
-        <span class="s2">&quot;mean&quot;</span><span class="p">:</span> <span class="n">statistics</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">numbers</span><span class="p">),</span>
-        <span class="s2">&quot;median&quot;</span><span class="p">:</span> <span class="n">statistics</span><span class="o">.</span><span class="n">median</span><span class="p">(</span><span class="n">numbers</span><span class="p">),</span>
-        <span class="s2">&quot;stdev&quot;</span><span class="p">:</span> <span class="n">statistics</span><span class="o">.</span><span class="n">stdev</span><span class="p">(</span><span class="n">numbers</span><span class="p">)</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">numbers</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="k">else</span> <span class="kc">None</span>
-    <span class="p">}</span>
+<span class="c1"># Define tools</span>
+<span class="k">def</span> <span class="nf">multiply</span><span class="p">(</span><span class="n">a</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">b</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Multiply two numbers.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">a</span> <span class="o">*</span> <span class="n">b</span>
+
+<span class="k">async</span> <span class="k">def</span> <span class="nf">fetch_weather</span><span class="p">(</span><span class="n">city</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Fetch weather for a city.&quot;&quot;&quot;</span>
+    <span class="c1"># Simulating an async API call</span>
+    <span class="k">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+    <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;The weather in </span><span class="si">{</span><span class="n">city</span><span class="si">}</span><span class="s2"> is sunny.&quot;</span>
 
 <span class="n">tools</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="n">Tool</span><span class="p">(</span>
-        <span class="n">name</span><span class="o">=</span><span class="s2">&quot;calculate_stats&quot;</span><span class="p">,</span>
-        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Calculate mean, median, and standard deviation for a list of numbers&quot;</span><span class="p">,</span>
-        <span class="n">function</span><span class="o">=</span><span class="n">calculate_stats</span>
-    <span class="p">)</span>
+    <span class="n">Tool</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;multiply&quot;</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Multiply two integers&quot;</span><span class="p">,</span> <span class="n">function</span><span class="o">=</span><span class="n">multiply</span><span class="p">),</span>
+    <span class="n">Tool</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;fetch_weather&quot;</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Fetch weather for a city&quot;</span><span class="p">,</span> <span class="n">function</span><span class="o">=</span><span class="n">fetch_weather</span><span class="p">)</span>
 <span class="p">]</span>
 
-<span class="n">chat</span> <span class="o">=</span> <span class="n">ChatOpenAI</span><span class="p">(</span><span class="s2">&quot;gpt-3.5-turbo&quot;</span><span class="p">,</span> <span class="n">tools</span><span class="o">=</span><span class="n">tools</span><span class="p">)</span>
+<span class="c1"># Initialize chat interfaces</span>
+<span class="n">chat_openai</span> <span class="o">=</span> <span class="n">ChatOpenAI</span><span class="p">(</span><span class="n">model</span><span class="o">=</span><span class="s2">&quot;gpt-3.5-turbo&quot;</span><span class="p">,</span> <span class="n">tools</span><span class="o">=</span><span class="n">tools</span><span class="p">,</span> <span class="n">tool_choice</span><span class="o">=</span><span class="s2">&quot;auto&quot;</span><span class="p">)</span>
+<span class="n">chat_claude</span> <span class="o">=</span> <span class="n">ChatClaude</span><span class="p">(</span><span class="n">model</span><span class="o">=</span><span class="s2">&quot;claude-3-opus-20240229&quot;</span><span class="p">,</span> <span class="n">tools</span><span class="o">=</span><span class="n">tools</span><span class="p">)</span>
 
-<span class="n">response</span> <span class="o">=</span> <span class="n">chat</span><span class="o">.</span><span class="n">invoke</span><span class="p">(</span><span class="s2">&quot;What are the mean, median, and standard deviation of 10, 15, 20, 25, and 30?&quot;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">response</span><span class="p">)</span>
+<span class="c1"># Synchronous example</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;OpenAI synchronous response:&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">chat_openai</span><span class="o">.</span><span class="n">invoke</span><span class="p">(</span><span class="s2">&quot;What is 6 times 7?&quot;</span><span class="p">))</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Claude synchronous response:&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">chat_claude</span><span class="o">.</span><span class="n">invoke</span><span class="p">(</span><span class="s2">&quot;What is 6 times 7?&quot;</span><span class="p">))</span>
+
+<span class="c1"># Asynchronous example</span>
+<span class="k">async</span> <span class="k">def</span> <span class="nf">async_example</span><span class="p">():</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">OpenAI asynchronous response:&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="k">await</span> <span class="n">chat_openai</span><span class="o">.</span><span class="n">ainvoke</span><span class="p">(</span><span class="s2">&quot;What&#39;s the weather like in Paris?&quot;</span><span class="p">))</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Claude asynchronous response:&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="k">await</span> <span class="n">chat_claude</span><span class="o">.</span><span class="n">ainvoke</span><span class="p">(</span><span class="s2">&quot;What&#39;s the weather like in Paris?&quot;</span><span class="p">))</span>
+
+<span class="n">asyncio</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">async_example</span><span class="p">())</span>
+
+<span class="c1"># Streaming example</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">OpenAI streaming response:&quot;</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">chunk</span> <span class="ow">in</span> <span class="n">chat_openai</span><span class="o">.</span><span class="n">stream_invoke</span><span class="p">(</span><span class="s2">&quot;Calculate 9 times 5, then check the weather in Tokyo.&quot;</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">chunk</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">flush</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n\n</span><span class="s2">Claude streaming response:&quot;</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">chunk</span> <span class="ow">in</span> <span class="n">chat_claude</span><span class="o">.</span><span class="n">stream_invoke</span><span class="p">(</span><span class="s2">&quot;Calculate 9 times 5, then check the weather in Tokyo.&quot;</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">chunk</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">flush</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="c1"># Async streaming example</span>
+<span class="k">async</span> <span class="k">def</span> <span class="nf">async_streaming_example</span><span class="p">():</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n\n</span><span class="s2">OpenAI async streaming response:&quot;</span><span class="p">)</span>
+    <span class="k">async</span> <span class="k">for</span> <span class="n">chunk</span> <span class="ow">in</span> <span class="n">chat_openai</span><span class="o">.</span><span class="n">astream_invoke</span><span class="p">(</span><span class="s2">&quot;What&#39;s 12 times 3? Then check the weather in London.&quot;</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">chunk</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">flush</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n\n</span><span class="s2">Claude async streaming response:&quot;</span><span class="p">)</span>
+    <span class="k">async</span> <span class="k">for</span> <span class="n">chunk</span> <span class="ow">in</span> <span class="n">chat_claude</span><span class="o">.</span><span class="n">astream_invoke</span><span class="p">(</span><span class="s2">&quot;What&#39;s 12 times 3? Then check the weather in London.&quot;</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">chunk</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">flush</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="n">asyncio</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">async_streaming_example</span><span class="p">())</span>
 </code></pre></div>
-<p>This might result in:</p>
-<div class="language-text highlight"><pre><span></span><code>To calculate the statistics for the numbers 10, 15, 20, 25, and 30, I&#39;ll use the calculate_stats function.
-
-Here are the results:
-
-1. Mean: 20.0
-   The mean is the average of all numbers. (10 + 15 + 20 + 25 + 30) / 5 = 20.0
-
-2. Median: 20.0
-   The median is the middle number when the list is sorted. In this case, it&#39;s 20.
-
-3. Standard Deviation: approximately 7.91
-   The standard deviation measures the amount of variation in the dataset.
-
-These statistics provide insights into the central tendency (mean and median) and spread (standard deviation) of the given numbers.
-
-Is there anything else you&#39;d like to know about these numbers or any other statistical calculations?
-</code></pre></div>
+<p>This notebook-style example demonstrates how to use both synchronous and asynchronous tools with OpenAI and Claude, including streaming responses.</p>
 <h2 id="best-practices">Best Practices<a class="headerlink" href="#best-practices" title="Permanent link">&para;</a></h2>
 <ol>
 <li>
@@ -742,7 +833,13 @@ Is there anything else you&#39;d like to know about these numbers or any other s
 <p><strong>Stateless Functions</strong>: Keep your tool functions stateless whenever possible. This ensures consistent behavior across multiple invocations.</p>
 </li>
 <li>
-<p><strong>Testing</strong>: Thoroughly test your tools independently before integrating them into chat interfaces.</p>
+<p><strong>Async vs Sync</strong>: Use async functions for I/O-bound operations (like API calls) and sync functions for CPU-bound operations. This helps maintain responsiveness in your application.</p>
+</li>
+<li>
+<p><strong>Testing</strong>: Thoroughly test your tools independently before integrating them into chat interfaces. Test both synchronous and asynchronous scenarios.</p>
+</li>
+<li>
+<p><strong>Context Management</strong>: Be mindful of the context when using async tools. Ensure you're in an async context when calling async methods.</p>
 </li>
 </ol>
 <p>Remember that the availability and behavior of tools may depend on the specific model you're using. Always refer to the latest documentation of the language model provider for the most up-to-date information on function calling capabilities.</p>
