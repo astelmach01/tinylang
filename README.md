@@ -90,7 +90,6 @@ For more detailed information about using Tinylang, please refer to our [documen
 
 ## To be Added
 
-- function calling for gemini
-- async tools
 - better docs
+- update gemini
 - refactor code
